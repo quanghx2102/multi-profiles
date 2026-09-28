@@ -15,6 +15,7 @@ Convert the feature-complete local product into a supportable Windows release wi
 - Windows security-tool compatibility (`AUD-017`) and upstream sustainability (`AUD-023`) are ready for release-level decisions.
 - A current Chromium candidate set is selected for `AUD-025`; stale rankings from the original conversation are not reused as evidence.
 - Release ownership, signing authority, support policy, and security-response roles are assigned.
+- Project license is selected, `AUD-015` has qualified review for the actual distribution, and third-party notices are complete.
 
 ## Dependencies and assumptions
 
@@ -36,6 +37,7 @@ Convert the feature-complete local product into a supportable Windows release wi
 - Capability registry based on observed adapter behavior.
 - Chromium adapter technical spike and independent go/no-go ADR.
 - Long-term Camoufox upstream/fork maintenance plan.
+- Approved project license and release-specific third-party notice/source-offer package where required.
 
 ## Out of scope
 
@@ -170,6 +172,8 @@ The spike ends with a separate ADR choosing `GO`, `CONDITIONAL GO`, `HOLD`, or `
 - Full common engine contract and qualification suite for the Chromium spike.
 
 ## Exit criteria
+
+Planned acceptance evidence uses the `AT-P5-*` identifiers in the [Requirement Catalogue](../REQUIREMENTS.md).
 
 - Installer and updater trust chain is documented, signed, tested, and recoverable.
 - Supported Windows/security-tool matrix and known limitations are published.

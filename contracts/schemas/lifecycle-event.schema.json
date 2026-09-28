@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:lifecycle-event:1",
+  "title": "Lifecycle Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "eventId", "operationId", "correlationId", "sequence", "timestamp", "profileId", "eventType", "fromState", "toState", "actor", "details"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "eventId": { "type": "string", "format": "uuid" },
+    "operationId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "profileId": { "type": "string", "format": "uuid" },
+    "eventType": { "enum": ["STATE_TRANSITION", "PROCESS_STARTED", "PROCESS_EXITED", "CHECKPOINT_OBSERVED", "PREFLIGHT_STARTED", "PREFLIGHT_COMPLETED", "TIMEOUT", "CANCELLATION_REQUESTED", "RECONCILIATION_REQUIRED", "SECURITY_DENIAL"] },
+    "fromState": { "$ref": "#/$defs/stateOrNull" },
+    "toState": { "$ref": "#/$defs/stateOrNull" },
+    "actor": { "enum": ["APPLICATION", "SUPERVISOR", "SIDECAR", "BROWSER", "UPDATER", "IMPORT_EXPORT", "USER"] },
+    "details": { "type": "object", "maxProperties": 64, "additionalProperties": { "type": ["string", "number", "integer", "boolean", "null"] }, "x-sensitive": false }
+  },
+  "$defs": {
+    "stateOrNull": {
+      "type": ["string", "null"],
+      "enum": [null, "DRAFT", "CREATING", "VERIFYING", "READY", "STOPPED", "STARTING", "LAUNCHED_UNVERIFIED", "RUNNING", "STOPPING", "RECOVERING", "QUARANTINED", "MIGRATING", "ROLLING_BACK", "ARCHIVED", "TRASHED", "PURGING"]
+    }
+  }
+}
+

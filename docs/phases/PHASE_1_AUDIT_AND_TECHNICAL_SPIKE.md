@@ -24,6 +24,7 @@ Determine whether a pinned Camoufox/launcher combination can safely support the 
 - Crash and operation-reconciliation experiments.
 - Probe coverage design and mutation testing.
 - Initial core migration/rollback and portability experiments when qualified artifacts are available.
+- TLS/HTTP, regional, display/DPI, media-device, Windows-hardening, preflight-TOCTOU, Tauri IPC, and protected-secret threat scopes.
 - Evidence-backed Camoufox, sidecar, and Phase 2 go/no-go decisions.
 
 ## Out of scope
@@ -55,6 +56,8 @@ Determine whether a pinned Camoufox/launcher combination can safely support the 
 
 ## Workstreams
 
+The executable ordering, dependencies, and all audit-to-workstream mappings are owned by [research/camoufox/AUDIT_PLAN.md](../../research/camoufox/AUDIT_PLAN.md). The order is deliberately fail-fast: licensing/provenance, sustainability, randomness/surfaces, launcher/sidecar, persistence/isolation, network containment, resources/crashes, then migration/portability.
+
 ### 1. Provenance, licensing, and sustainability
 
 Audit `AUD-015`, `AUD-016`, and `AUD-023` together. Record the exact ownership and license of source, patches, launchers, dependencies, release assets, and build outputs. Separate legal questions from engineering observations and obtain qualified review before distribution conclusions.
@@ -69,7 +72,7 @@ Deliverables:
 
 ### 2. Identity determinism and surface coverage
 
-Audit `AUD-001`, `AUD-002`, `AUD-003`, `AUD-006`, `AUD-007`, `AUD-019`, and `AUD-022`. Build a source-to-probe coverage map before treating restart results as complete.
+Audit `AUD-001`, `AUD-002`, `AUD-003`, `AUD-006`, `AUD-007`, `AUD-019`, `AUD-022`, and `AUD-027` through `AUD-030`. Build a source-to-probe coverage map before treating restart results as complete.
 
 Required experiments:
 
@@ -112,7 +115,7 @@ Deliverables:
 
 ### 4. Proxy and network containment
 
-Audit `AUD-008` using controlled observation infrastructure. Cover request paths, failure behavior, authentication, DNS resolution, WebRTC candidates, redirects, websockets, downloads, and service-worker traffic.
+Audit `AUD-008`, `AUD-027`, and `AUD-028` using controlled observation infrastructure. Cover request paths, TLS/HTTP behavior, regional coherence, failure behavior, authentication, DNS resolution, WebRTC candidates, redirects, websockets, downloads, and service-worker traffic.
 
 Deliverables:
 
@@ -123,7 +126,7 @@ Deliverables:
 
 ### 5. Launcher and sidecar boundary
 
-Audit `AUD-012` and `AUD-024`. Apply one conformance scenario set to the TypeScript and Python launchers. The TypeScript preference is not a decision until parity is evidenced.
+Audit `AUD-012`, `AUD-024`, `AUD-031`, `AUD-033`, and `AUD-034`. Apply one conformance scenario set to the TypeScript and Python launchers. The TypeScript preference and sidecar topology are not decisions until parity, isolation, resource, authentication, crash-blast-radius, compatibility, and adoption evidence exists.
 
 The protocol spike must exercise:
 
@@ -134,6 +137,8 @@ The protocol spike must exercise:
 - core, sidecar, and browser crash permutations;
 - timeout, cancellation, event ordering, and backpressure;
 - safe delivery of sensitive configuration without argv/log exposure.
+
+Use [SIDECAR_PROCESS_MODEL.md](../SIDECAR_PROCESS_MODEL.md) as the intended authority model. The spike must either validate a concrete Windows mechanism for it or record the necessary design change; the document itself is not evidence that containment/adoption works.
 
 Deliverables:
 
@@ -154,7 +159,7 @@ For each audit item:
 1. Pin revisions, artifacts, environment, and hypothesis.
 2. Record source paths and exact lines or symbols inspected.
 3. Define the procedure and expected result before execution.
-4. Store raw output with integrity hashes and secret redaction.
+4. Store raw output with integrity hashes and secret redaction using the [Camoufox evidence workspace](../../research/camoufox/evidence/README.md).
 5. Record observed result, confounders, and reproduction steps.
 6. Assign evidence quality according to the audit register.
 7. Record required decision, patch, and regression test.
@@ -165,6 +170,8 @@ A source claim and a runtime claim are separate evidence. A single passing envir
 ## Phase deliverables
 
 - Updated [Audit Register](../AUDIT_REGISTER.md) with evidence links and decisions.
+- Selected [upstream lock](../../research/camoufox/UPSTREAM_LOCK.json) with no floating revisions or unverified hashes.
+- Per-item audit reports and evidence manifests following the [Phase 1 templates](../audit/README.md).
 - Source/release/artifact inventory.
 - Fingerprint-surface and probe coverage specification.
 - Reproducible experiment matrix and results.
@@ -174,9 +181,11 @@ A source claim and a runtime claim are separate evidence. A single passing envir
 - Camoufox go/no-go report.
 - Phase 2 readiness checklist and pinned implementation inputs.
 
+Planned acceptance packages use the `AT-P1-*` identifiers in the [Requirement Catalogue](../REQUIREMENTS.md).
+
 ## Mandatory Phase 2 gate
 
-The following audits require an evidence-backed decision before Phase 2: `AUD-001` through `AUD-008`, `AUD-012` through `AUD-016`, `AUD-019`, and `AUD-022` through `AUD-024`.
+The following audits require an evidence-backed decision before Phase 2: `AUD-001` through `AUD-008`, `AUD-012` through `AUD-016`, `AUD-019`, `AUD-022` through `AUD-024`, and `AUD-027` through `AUD-034`. For `AUD-033` and implementation-dependent portions of other audits, Phase 1 must approve the testable design and fail-closed gate; runtime closure remains a Phase 2 exit obligation.
 
 They do not all need the same terminal status. Acceptable outcomes are:
 

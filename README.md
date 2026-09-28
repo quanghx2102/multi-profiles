@@ -2,7 +2,7 @@
 
 This repository currently contains the Phase 1 architecture and audit baseline for a Windows-first, single-user desktop application that manages isolated browser profiles. Camoufox/Firefox is the first intended browser engine, but it is treated as an adapter behind an engine-neutral contract.
 
-No production application has been scaffolded. No runtime dependency has been selected or installed by this phase.
+No production application has been scaffolded. No runtime dependency has been installed or version-pinned during Phase 1; planned technology choices are recorded as architecture decisions only.
 
 ## Product intent
 
@@ -16,15 +16,29 @@ Phase 1 is documentation and evidence planning only. Camoufox behavior remains u
 
 Start with:
 
+- [Documentation Governance](docs/DOCUMENTATION_GOVERNANCE.md)
 - [Product Scope](docs/PRODUCT_SCOPE.md)
+- [Requirement Catalogue](docs/REQUIREMENTS.md)
+- [Feature Disposition Matrix](docs/FEATURE_MATRIX.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development Phases](docs/DEVELOPMENT_PHASES.md)
 - [Detailed Phase Specifications](docs/phases/README.md)
 - [Audit Register](docs/AUDIT_REGISTER.md)
+- [Audit Evidence Templates](docs/audit/README.md)
+- [Camoufox Audit Workspace](research/camoufox/README.md)
+- [Draft Contract Schemas](contracts/README.md)
+- [Data Authority](docs/DATA_AUTHORITY.md)
+- [Decisions Requiring Approval](docs/DECISIONS_REQUIRED.md)
 - [Test Strategy](docs/TEST_STRATEGY.md)
 - [Decision and Requirement Traceability](docs/TRACEABILITY.md)
 - [Architecture Decision Records](docs/adr/)
 
 ## Documentation authority
 
-When documents appear to conflict, accepted ADRs govern architectural choices, the audit register governs evidence status, and the product scope governs feature boundaries. Terms have the meanings defined in the [Glossary](docs/GLOSSARY.md).
+When documents appear to conflict, follow [Documentation Governance](docs/DOCUMENTATION_GOVERNANCE.md). Accepted ADRs govern architectural choices, the audit register governs evidence status, the requirement catalogue governs stable requirement IDs, and the product scope plus feature matrix govern feature boundaries. Terms have the meanings defined in the [Glossary](docs/GLOSSARY.md).
+
+Run the dependency-free documentation check with:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/docs-check.ps1
+```

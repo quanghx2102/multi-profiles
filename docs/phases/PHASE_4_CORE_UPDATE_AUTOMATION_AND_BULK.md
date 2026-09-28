@@ -26,6 +26,10 @@ Add controlled browser-core evolution and high-level automation without allowing
 
 ## In scope
 
+Phase 4 is divided into a mandatory delivery track and an optional product-experiment track. Phase 4B does not block completion of Phase 4A or entry to Phase 5 when it is explicitly deferred or rejected.
+
+### Phase 4A — mandatory
+
 - Immutable multi-core installation catalogue.
 - Verified update discovery, download, staging, qualification, and retention.
 - Stable Automatic, Manual Approval, and Pinned profile policies.
@@ -34,10 +38,14 @@ Add controlled browser-core evolution and high-level automation without allowing
 - Profile-safe bulk operations with independent results.
 - Authenticated local REST API and operation-status model.
 - Playwright-oriented automation behind application policy.
+- Scheduling, cancellation, retry, concurrency, and resource admission for mandatory operations.
+
+### Phase 4B — optional
+
 - Human typing behavior.
 - Basic Cookie Bot jobs.
 - Optional semantic Run with Sync prototype.
-- Scheduling, cancellation, retry, concurrency, and resource admission for these operations.
+- Scheduling, cancellation, retry, concurrency, and resource admission for any accepted optional behavior.
 
 ## Out of scope
 
@@ -62,6 +70,8 @@ Add controlled browser-core evolution and high-level automation without allowing
 
 ## Workstreams
 
+Workstreams 1–6 are Phase 4A. Workstreams 7–9 are Phase 4B and require individual accept/defer/reject decisions.
+
 ### 1. Core catalogue and verified installation
 
 Implement [UPDATE_STRATEGY.md](../UPDATE_STRATEGY.md) with immutable installations identified by engine, platform, version, build/artifact hash, provenance, adapter compatibility, and qualification state.
@@ -74,6 +84,8 @@ Update processing must:
 - coexist with running profiles that still reference an older core;
 - retain the old core and recovery point for the approved rollback window;
 - support emergency revocation without deleting evidence or active recovery prerequisites.
+
+`core-updater` owns download, untrusted staging, provenance authorization, installation finalization, catalogue state, and retention. The engine adapter only validates the candidate/installed layout through the engine contract; it cannot install or authorize an artifact.
 
 ### 2. Qualification and canary pipeline
 
@@ -141,15 +153,15 @@ Define:
 - browser/profile shutdown interaction;
 - resource quotas and cleanup after client disconnect.
 
-### 7. Human typing
+### 7. Human typing (Phase 4B optional)
 
 Provide Unicode, IME, clipboard, input, textarea, and contenteditable-aware behavior through approved browser/UI mechanisms. Timing policy must be configurable and testable; it must not be marketed as human indistinguishability.
 
-### 8. Basic Cookie Bot
+### 8. Basic Cookie Bot (Phase 4B optional)
 
 Support per-profile URL lists, navigation/consent/scroll rules, timeouts, retry, job log, proxy bandwidth/resource limits, and cancellation. Reused schedules or behavior across profiles are an explicit correlation risk and must not be described as natural browsing.
 
-### 9. Optional Run with Sync prototype
+### 9. Run with Sync prototype (Phase 4B optional)
 
 Mirror semantic intent rather than raw coordinates:
 
@@ -163,6 +175,8 @@ Mirror semantic intent rather than raw coordinates:
 The prototype may be rejected or deferred without blocking the rest of Phase 4.
 
 ## Acceptance scenarios
+
+Planned evidence for these scenarios uses the `AT-P4-*` identifiers in the [Requirement Catalogue](../REQUIREMENTS.md).
 
 - Install a valid core beside the active core and reject tampered, replayed, stale, wrong-platform, or untrusted artifacts.
 - Qualify a candidate without changing any production profile pointer.
@@ -194,8 +208,7 @@ The prototype may be rejected or deferred without blocking the rest of Phase 4.
 - Bulk operations are bounded, independently recoverable, and transparent about partial failure.
 - Local API security tests pass and no endpoint bypasses application use cases.
 - Automation leases cannot cross profile boundaries or mutate identity policy.
-- Human typing and Cookie Bot meet functional behavior without overstated anti-detection claims.
-- Optional Run with Sync is either accepted with documented limits or explicitly deferred/rejected.
+- Each Phase 4B behavior that is accepted meets its functional and safety criteria without overstated anti-detection claims; otherwise it is explicitly deferred or rejected.
 - No critical supply-chain, migration, API, automation, or resource defect remains.
 - Phase 5 receives operational measurements, release candidates, and stable capability metadata.
 

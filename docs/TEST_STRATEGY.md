@@ -4,6 +4,8 @@
 
 Tests establish the behavioral contract; README claims do not. Camoufox assertions remain hypotheses until reproducible source or test evidence is attached to the relevant audit item.
 
+Planned acceptance evidence has stable `AT-*` identifiers in [REQUIREMENTS.md](REQUIREMENTS.md). Phase 1 audit reports use [docs/audit](audit/README.md), while exact evidence records and artifacts follow [research/camoufox/evidence](../research/camoufox/evidence/README.md). A template or planned test ID is not completed evidence. Environment descriptors use IDs and dimensions from [SUPPORTED_ENVIRONMENTS.md](SUPPORTED_ENVIRONMENTS.md).
+
 ## Test layers
 
 | Layer | Purpose |
@@ -16,10 +18,12 @@ Tests establish the behavioral contract; README claims do not. Camoufox assertio
 | Multi-profile isolation tests | distinct identities, directories, state, processes, and no interference |
 | Cross-context tests | main frame, iframe, worker, service worker, and worklet propagation |
 | Proxy leak tests | HTTP/HTTPS/SOCKS, authentication, DNS, WebRTC, failure and bypass paths |
+| Coherence tests | TLS/HTTP headers, locale/timezone/geolocation/proxy, display/DPI, and media-device cross-context behavior |
 | Crash/fault-injection tests | process, sidecar, app, disk, and transaction failures at operation boundaries |
 | Migration/rollback tests | semantic diffs, storage compatibility, commit, rollback, and retained core |
 | Import/export tests | cryptography, mode rules, hostile containers, portability, partial failure |
 | Security tests | IPC/API authorization, input bounds, path attacks, redaction, artifact tampering |
+| TOCTOU tests | preflight generation invalidation, revalidation triggers, navigation/lease containment, and lost-event races |
 | Resource benchmarks | RAM, CPU, GPU, handles, startup/stop time at concurrent profile counts |
 | Desktop E2E tests | user-visible workflows through the application boundary in later phases |
 
@@ -66,4 +70,3 @@ Inject failure before and after each durable boundary in create, start, stop, sn
 ## Exit criteria relationship
 
 Phase exit criteria are in [DEVELOPMENT_PHASES.md](DEVELOPMENT_PHASES.md). An audit changes status only when its recorded evidence meets the quality needed for its required decision.
-

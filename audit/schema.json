@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:audit-item:1",
+  "title": "Audit Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "id", "title", "category", "question", "whyItMatters",
+    "currentHypothesis", "knownEvidence", "evidenceQuality", "sourceTargets",
+    "testProcedure", "testEnvironments", "expectedResult", "observedResult",
+    "severity", "probability", "impact", "blocksPhase", "requiredDecision",
+    "requiredPatch", "regressionTest", "owner", "status", "createdDate",
+    "lastUpdatedDate", "evidenceReferences", "notes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "type": "string", "pattern": "^AUD-[0-9]{3}$" },
+    "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+    "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+    "question": { "type": "string", "minLength": 10, "maxLength": 2000 },
+    "whyItMatters": { "type": "string", "minLength": 10, "maxLength": 2000 },
+    "currentHypothesis": { "type": "string", "minLength": 3, "maxLength": 4000 },
+    "knownEvidence": { "type": "string", "minLength": 3, "maxLength": 4000 },
+    "evidenceQuality": {
+      "enum": ["NONE", "HYPOTHESIS", "DOCUMENTED", "SOURCE_CONFIRMED", "TEST_CONFIRMED", "MULTI_ENV_CONFIRMED"]
+    },
+    "sourceTargets": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 500 }, "maxItems": 100 },
+    "testProcedure": { "type": "string", "minLength": 3, "maxLength": 8000 },
+    "testEnvironments": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 500 }, "maxItems": 100 },
+    "expectedResult": { "type": "string", "minLength": 3, "maxLength": 4000 },
+    "observedResult": { "type": "string", "minLength": 3, "maxLength": 8000 },
+    "severity": { "enum": ["Low", "Medium", "High", "Critical"] },
+    "probability": { "enum": ["Low", "Medium", "High", "Unknown"] },
+    "impact": { "type": "string", "minLength": 3, "maxLength": 2000 },
+    "blocksPhase": { "type": "string", "minLength": 2, "maxLength": 500 },
+    "requiredDecision": { "type": "string", "minLength": 3, "maxLength": 2000 },
+    "requiredPatch": { "type": "string", "minLength": 3, "maxLength": 2000 },
+    "regressionTest": { "type": "string", "minLength": 3, "maxLength": 2000 },
+    "owner": { "type": "string", "minLength": 2, "maxLength": 200 },
+    "status": {
+      "enum": ["NOT_STARTED", "RESEARCHING", "TEST_READY", "BLOCKED", "CONFIRMED", "PATCH_REQUIRED", "RESOLVED", "ACCEPTED_RISK", "REJECTED"]
+    },
+    "createdDate": { "type": "string", "format": "date" },
+    "lastUpdatedDate": { "type": "string", "format": "date" },
+    "evidenceReferences": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(EVD-AUD-[0-9]{3}-[0-9]{3}|https?://|[^\\s]+)$", "maxLength": 1000 },
+      "uniqueItems": true,
+      "maxItems": 200
+    },
+    "notes": { "type": "string", "maxLength": 4000 }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "enum": ["CONFIRMED", "RESOLVED"] } }, "required": ["status"] },
+      "then": { "properties": { "evidenceReferences": { "minItems": 1 } } }
+    }
+  ]
+}

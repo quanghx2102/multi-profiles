@@ -12,6 +12,7 @@ Deliver a Windows-first local desktop MVP that creates, lists, starts, stops, an
 
 - Phase 1 exit decision permits implementation.
 - Every Phase 2 blocking audit has an accepted outcome.
+- Phase-2-blocking pending decisions in [DECISIONS_REQUIRED.md](../DECISIONS_REQUIRED.md) are approved or explicitly deferred with an enforceable exclusion.
 - Camoufox core, launcher, sidecar language/transport, schemas, support matrix, and concurrency limit are pinned.
 - Architecture ADRs remain accepted or have explicit superseding ADRs.
 - Threat boundaries and test fixtures are approved.
@@ -20,7 +21,7 @@ Deliver a Windows-first local desktop MVP that creates, lists, starts, stops, an
 ## Dependencies and assumptions
 
 - Pinned qualified Camoufox core and launcher/sidecar inputs from Phase 1.
-- Accepted sidecar protocol, fingerprint probe, proxy modes, and concurrency cap.
+- Accepted sidecar protocol, fingerprint probe, proxy modes, process-ownership/containment mechanism, and concurrency cap.
 - Windows development/signing is not yet a release requirement, but the supported runtime matrix is available for tests.
 - Approved Rust/Tauri/React/SQLite/keychain implementation choices remain adapters behind the documented boundaries.
 - Phase 1 regression fixtures can run against the integrated desktop path.
@@ -29,10 +30,11 @@ Deliver a Windows-first local desktop MVP that creates, lists, starts, stops, an
 
 - Initial repository/application scaffolding under the accepted architecture.
 - Domain and application modules independent of frameworks and engines.
-- Profile catalogue: create, inspect, edit allowed metadata, archive/delete/restore.
+- Profile catalogue: create, inspect, edit allowed metadata, archive/unarchive, move to trash, restore from trash, and permanent purge according to the approved lifecycle decision.
 - Search, sort, filter, and basic folders/tags/notes/status.
+- Basic non-identity default/template settings and startup URL configuration; each created profile still receives unique identity material.
 - SQLite metadata through Rust-side repositories.
-- Integrity-protected identity manifest and protected profile-secret handle.
+- Integrity-protected immutable identity manifest, separate runtime configuration/baseline/compatibility records, and protected profile-secret handle.
 - Dedicated data directory and one supervised process tree per running profile.
 - Versioned browser-driver sidecar and Camoufox adapter.
 - Create/Start/Stop and bounded crash-recovery workflows.
@@ -56,7 +58,7 @@ Deliver a Windows-first local desktop MVP that creates, lists, starts, stops, an
 ## Phase deliverables
 
 - Implemented domain/application boundaries and typed contracts.
-- Local metadata store, identity manifest, protected secret references, and operation journal.
+- Local metadata store, separated identity/runtime/observation records, protected secret references, and operation journal.
 - Qualified Camoufox adapter, sidecar client/process, and process supervisor.
 - Create/Start/Stop/recovery lifecycle with lock and preflight enforcement.
 - Basic proxy support and profile catalogue UI.
@@ -69,7 +71,7 @@ Deliver a Windows-first local desktop MVP that creates, lists, starts, stops, an
 
 - Establish module/package boundaries from [MODULE_BOUNDARIES.md](../MODULE_BOUNDARIES.md).
 - Implement domain identifiers, lifecycle states, value validation, typed errors, and capability requirements.
-- Generate or maintain typed IPC/protocol bindings from versioned schemas.
+- Accept or revise the [draft schemas](../../contracts/README.md), then generate or maintain typed IPC/protocol bindings from the accepted versions.
 - Create composition roots without leaking framework types into domain/application modules.
 - Add unit, invariant, contract, and architecture-boundary tests.
 
@@ -77,7 +79,7 @@ Exit signal: pure domain and contract suites pass without Tauri, SQLite, Playwri
 
 ### Increment 2.2 — Metadata, identity, and secure storage
 
-- Implement profile, operation, core reference, baseline reference, and proxy reference repositories.
+- Implement profile, operation, immutable manifest, runtime configuration, core reference, baseline, compatibility, and proxy reference repositories.
 - Add transactional schema migration and atomic identity-manifest writes.
 - Integrate the approved OS-protected secret mechanism through opaque handles.
 - Enforce immutable `profileId`, `engineId`, and `profileSecret` lineage.
@@ -88,6 +90,7 @@ Exit signal: storage crash tests and identity-integrity tests preserve an explai
 ### Increment 2.3 — Sidecar, adapter, and process supervision
 
 - Implement the approved protocol and instance authentication.
+- Implement the authority split in [SIDECAR_PROCESS_MODEL.md](../SIDECAR_PROCESS_MODEL.md): the supervisor spawns/owns the tree and the sidecar invokes the launcher/owns the automation session.
 - Implement Camoufox capability reporting, validated launch, graceful stop, typed exit/error events, and uncertain-outcome reconciliation.
 - Track the complete owned process tree and prevent blind duplicate launch.
 - Enforce the qualified core/artifact and supported environment.
@@ -108,7 +111,8 @@ Exit signal: clean and injected-failure lifecycle matrices produce only allowed 
 
 - Support only Phase 1-approved proxy schemes and failure policies.
 - Store credentials as protected handles and show sanitized connectivity/preflight results.
-- Provide profile list, create/edit form, status, search/filter, grouping metadata, start/stop, archive/delete/restore, and recovery/quarantine views.
+- Provide profile list, create/edit form, status, search/filter, grouping metadata, start/stop, archive/unarchive, trash/trash-restore, purge, and recovery/quarantine views according to approved lifecycle semantics.
+- Allow approved basic defaults/templates and startup URLs without copying identity IDs, secrets, seeds, or accepted baselines.
 - Keep renderer models presentation-safe and prohibit raw paths/secrets unless explicitly approved and sanitized.
 
 Exit signal: desktop E2E tests complete core user journeys without database, filesystem, process, or shell access from the renderer.
@@ -122,6 +126,8 @@ Exit signal: desktop E2E tests complete core user journeys without database, fil
 - Update documentation and ADRs to match implemented behavior.
 
 ## Primary user journeys and acceptance
+
+Planned evidence for these journeys uses the `AT-P2-*` identifiers in the [Requirement Catalogue](../REQUIREMENTS.md).
 
 ### Create profile
 
@@ -200,4 +206,4 @@ Custom table behavior and visual polish may be incremental, but safety-critical 
 
 ## Handoff to Phase 3
 
-The handoff includes stable profile and manifest schemas, repository contracts, checkpoint semantics, browser-state inventory, extension capability result, supported proxy modes, keychain abstraction, lifecycle recovery behavior, compatibility-report inputs, and production-grade regression fixtures.
+The handoff includes stable profile, immutable manifest, runtime configuration, baseline, and compatibility schemas; repository contracts; checkpoint semantics; browser-state inventory; extension capability result; supported proxy modes; keychain abstraction; lifecycle recovery behavior; compatibility-report inputs; and production-grade regression fixtures.

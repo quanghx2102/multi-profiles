@@ -8,27 +8,18 @@ This is the target architecture agreed for planning. It does not assert that Cam
 
 The application uses a modular ports-and-adapters architecture. Domain and application policies sit inside the system boundary; desktop UI, persistence, keychain, filesystem, browser engines, automation libraries, and operating-system facilities are replaceable adapters.
 
-```text
-Desktop UI (React/TypeScript, planned)
-             |
-       validated Tauri IPC
-             |
-Application use cases ---- Domain model
-       |       |               |
-       |       +---- ports ----+
-       |
-       +-- Profile/storage adapters (SQLite + filesystem, planned)
-       +-- Security adapters (OS keychain + crypto, planned)
-       +-- Process supervisor
-       +-- BrowserEngine contract
-                    |
-             Camoufox adapter
-                    |
-       versioned local sidecar protocol
-                    |
-       Browser-driver sidecar + Playwright
-                    |
-             Camoufox process
+```mermaid
+flowchart LR
+    UI[Desktop UI<br/>React/TypeScript planned] -->|allowlisted validated IPC| APP[Application use cases]
+    APP --> DOMAIN[Domain model]
+    APP --> PORTS[Ports]
+    PORTS --> STORE[Storage adapters<br/>SQLite/filesystem planned]
+    PORTS --> SECRET[Protected-secret adapter]
+    PORTS --> SUP[Process supervisor]
+    PORTS --> ENGINE[BrowserEngine contract]
+    ENGINE --> CAM[Camoufox adapter<br/>unverified candidate]
+    CAM -->|versioned authenticated protocol| SIDE[Browser-driver sidecar]
+    SIDE --> BROWSER[Camoufox process<br/>unverified candidate]
 ```
 
 The named technologies are planned choices recorded in ADRs; they are not scaffolded in Phase 1.
@@ -52,21 +43,28 @@ The domain must never branch on `camoufox` or `chromium`. Differences are repres
 | Rust Core → sidecar | Versioned requests, non-secret handles, lifecycle context | Authenticated local channel, protocol negotiation, correlation IDs |
 | Rust Core → keychain | Secret values and stable lookup identifiers | Least privilege; values never returned to UI |
 | Rust Core → storage | Domain records, manifests, journals, snapshot metadata | Repository ports and transactions |
-| Sidecar → browser | Launch configuration and automation commands | No secrets in argv; one process tree per profile |
+| Sidecar → browser | Launch configuration and automation commands | Sidecar invokes the launcher; no secrets in argv; one supervised tree per profile |
 | Local API → application | Authenticated automation requests | Loopback by default, scoped token, rate/operation controls |
 | Updater → core store | Versioned artifacts and provenance metadata | Checksum/signature verification and anti-downgrade policy |
 
-Protocol transport, sidecar language, and Camoufox launch semantics are deliberately unresolved (`AUD-012`, `AUD-024`).
+The Rust-side process supervisor is authoritative for the supervised sidecar/browser tree; the sidecar owns the launcher and automation session. Protocol transport, concrete Windows containment, sidecar language, and Camoufox launch semantics are deliberately unresolved (`AUD-012`, `AUD-024`). See [SIDECAR_PROCESS_MODEL.md](SIDECAR_PROCESS_MODEL.md) and [ADR-0012](adr/0012-supervised-sidecar-process-ownership.md).
+
+The local API enablement default is not yet accepted (`DEC-API-001`). Regardless of that choice, loopback is not treated as authentication. [Threat Model](THREAT_MODEL.md) owns the trust-boundary analysis.
 
 ## Aggregates and ownership
 
-- **Profile aggregate:** identity references, engine binding, state, proxy assignment, active core, lock state, and lifecycle rules.
-- **Identity manifest:** canonical identity inputs and versioned baselines; mutated only through explicit identity/migration use cases.
+- **Profile aggregate:** references to immutable identity, mutable runtime configuration, accepted baselines, state, lock, and lifecycle rules; it is the proposed owner of the only mutable `activeCoreId` and its activation generation.
+- **Identity manifest:** canonical immutable identity inputs, protected-secret reference, derivation metadata, and integrity information.
+- **Runtime configuration:** mutable proxy, approved extension, startup, and other non-identity launch choices.
+- **Fingerprint baseline:** normalized observations for a versioned engine/core/probe/environment tuple.
+- **Compatibility record:** immutable result for a proposed launch, migration, restore, or import.
 - **Browser-core installation:** immutable installed artifact plus verification and compatibility status.
 - **Snapshot:** immutable recovery point linked to a profile checkpoint.
 - **Operation:** correlated durable record for long-running start, stop, migration, import, export, and recovery work.
 
-Detailed ownership is in [MODULE_BOUNDARIES.md](MODULE_BOUNDARIES.md); persistence is in [STORAGE_MODEL.md](STORAGE_MODEL.md).
+Detailed ownership is in [MODULE_BOUNDARIES.md](MODULE_BOUNDARIES.md), authoritative data ownership in [DATA_AUTHORITY.md](DATA_AUTHORITY.md), and persistence in [STORAGE_MODEL.md](STORAGE_MODEL.md). The active-core clarification remains proposed in [ADR-0015](adr/0015-profile-owned-active-core-pointer.md); no competing mutable pointer may be introduced while it is pending.
+
+These record classes are separated by [ADR-0014](adr/0014-separate-identity-runtime-and-observation-records.md); a mutable core or proxy choice is never stored as immutable identity truth.
 
 ## Key invariants
 
@@ -83,7 +81,7 @@ Detailed ownership is in [MODULE_BOUNDARIES.md](MODULE_BOUNDARIES.md); persisten
 
 ## Failure model
 
-Every cross-process request has an operation ID, deadline, cancellation behavior, and typed result. Uncertain outcomes are not treated as success. After a timeout or crash, the supervisor reconciles process state, the application consults the event journal, and the profile remains locked or quarantined until safety is established.
+Every cross-process request has an operation ID, deadline, cancellation behavior, and typed result. Uncertain outcomes are not treated as success. After a timeout or crash, the supervisor reconciles process state, the application consults the event journal, and the profile remains locked or quarantined until safety is established. [Operations Model](OPERATIONS_MODEL.md) owns these semantics.
 
 Failures are classified as:
 
@@ -110,4 +108,3 @@ A future Chromium adapter must implement the same behavioral contract but may ex
 - First adapter: Camoufox, conditional on Phase 1 evidence.
 
 Selection of TypeScript or Python for the sidecar is deferred to `AUD-012`; transport and recovery semantics are deferred to `AUD-024`.
-

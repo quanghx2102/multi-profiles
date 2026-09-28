@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:typed-error:1",
+  "title": "Typed Error",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "code", "category", "retryable", "safeMessage", "details", "reconciliationRequired"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,95}$" },
+    "category": { "enum": ["VALIDATION", "POLICY_REJECTION", "CAPABILITY_UNAVAILABLE", "INTEGRITY", "PROVENANCE", "PROCESS", "IO", "TIMEOUT", "PROTOCOL", "FINGERPRINT", "SECURITY", "INTERNAL"] },
+    "retryable": { "type": "boolean" },
+    "safeMessage": { "type": "string", "minLength": 1, "maxLength": 1024, "x-sensitive": false },
+    "details": { "type": "object", "maxProperties": 64, "additionalProperties": { "type": ["string", "number", "integer", "boolean", "null"] }, "x-sensitive": false },
+    "reconciliationRequired": { "type": "boolean" }
+  }
+}
+

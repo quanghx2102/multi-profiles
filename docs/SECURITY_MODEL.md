@@ -18,13 +18,15 @@ The renderer is not trusted with secrets or ambient filesystem/process authority
 
 The sidecar is less trusted than the core. The local channel requires protocol negotiation and instance authentication. Requests are scoped to an operation/profile, paths are resolved by the core, and secrets are not placed in argv, environment inherited broadly, or logs. The concrete secure transport and secret-delivery mechanism are open in `AUD-024`.
 
+The sidecar may invoke only the authorized launcher within its negotiated session. It does not receive durable lifecycle authority or permission to terminate arbitrary processes. The supervisor verifies and controls the supervised tree as specified in [SIDECAR_PROCESS_MODEL.md](SIDECAR_PROCESS_MODEL.md); the concrete Windows mechanism remains an `AUD-024` question.
+
 ### Sidecar to browser/content
 
 Web content is hostile. Automation results, page strings, downloaded files, and browser events are untrusted input. Browser process permissions and filesystem access are restricted to the assigned profile/core paths where the platform permits.
 
 ### Local automation API
 
-The API binds loopback only by default, requires a high-entropy scoped authentication token, validates Origin where applicable, and must not rely on loopback as authentication. Exposure and authentication are tested under `AUD-018`.
+Whether the API is enabled by default remains `DEC-API-001`. If enabled, it binds loopback only, requires a high-entropy scoped authentication token, validates Origin where applicable, and must not rely on loopback as authentication. Exposure and authentication are tested under `AUD-018`, `AUD-033`, and `AUD-034`.
 
 ### Artifact and import boundary
 
@@ -58,9 +60,10 @@ Implementation details and memory-zeroization guarantees are deferred to impleme
 
 ## Threats requiring validation
 
-Sidecar endpoint hijacking, token theft by another local process, browser escape, malicious extension behavior, antivirus quarantine, update-channel compromise, downgrade, export tampering, archive traversal, lock bypass, secret leakage in crash dumps, and proxy/DNS/WebRTC leakage require dedicated tests or later threat-model review. Relevant initial audits are `AUD-008`, `AUD-011`, `AUD-015`–`AUD-018`, and `AUD-024`.
+Sidecar endpoint hijacking, token theft by another local process, browser escape, malicious extension behavior, antivirus quarantine, update-channel compromise, downgrade, export tampering, archive traversal, lock bypass, secret leakage in crash dumps or opaque browser state, and proxy/DNS/WebRTC leakage require dedicated tests or later threat-model review. Relevant initial audits are `AUD-008`, `AUD-011`, `AUD-015`–`AUD-018`, `AUD-024`, and `AUD-026`.
+
+The detailed asset, attacker, trust-boundary, mitigation-owner, and verification analysis is in [THREAT_MODEL.md](THREAT_MODEL.md). The expanded audit coverage is `AUD-027` through `AUD-034`.
 
 ## Diagnostics policy
 
 Structured logs include timestamp, severity, module, event, operation/correlation ID, non-secret profile ID, engine/core identifiers, state transition, duration, and typed error code. They exclude page content by default. Process exit information and semantic fingerprint diffs are normalized and redacted. A diagnostic bundle contains a manifest of included files and applied redactions.
-

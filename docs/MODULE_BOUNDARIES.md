@@ -4,26 +4,28 @@
 
 Modules communicate only through public contracts. No module deep-imports another module's implementation. The application composition root is the only place that selects concrete adapters. The ownership statements below are normative.
 
+The target physical placement, allowed dependency graph, composition roots, generated-contract policy, and boundary-test expectations are in [REPOSITORY_LAYOUT.md](REPOSITORY_LAYOUT.md). [DATA_AUTHORITY.md](DATA_AUTHORITY.md) owns record authority and [OPERATIONS_MODEL.md](OPERATIONS_MODEL.md) owns cross-module effect semantics.
+
 ## Module catalogue
 
 ### `domain`
 
 - **Owns:** entities, value objects, state transitions, invariants, domain errors, and capability requirements.
-- **Public concepts:** `Profile`, `IdentityManifest`, `BrowserCoreRef`, `ProxyPolicy`, `SnapshotRef`, lifecycle states, semantic diff policy.
+- **Public concepts:** `Profile`, `IdentityManifest`, `RuntimeConfiguration`, `FingerprintBaseline`, `CompatibilityRecord`, `BrowserCoreRef`, `ProxyPolicy`, `SnapshotRef`, lifecycle states, semantic diff policy.
 - **Depends on:** nothing outside the domain.
 - **Does not own:** persistence, processes, UI, cryptography implementations, engine calls, or filesystem layout.
 
 ### `application`
 
 - **Owns:** use-case orchestration, transaction boundaries, authorization policy, retries, reconciliation, and port definitions not owned by the domain.
-- **Public operations:** create/start/stop/recover profile; snapshot/restore; import/export; install/migrate/rollback core; bulk commands.
+- **Public operations:** create/start/stop/reconcile profile; archive/unarchive/trash/trash-restore/purge; snapshot recovery; Backup/Transfer/Duplicate; install/migrate/rollback core; bulk commands.
 - **Depends on:** `domain` and abstract ports.
 - **Does not own:** framework handlers, SQL, Playwright calls, or engine-specific configuration.
 
 ### `engine-contract`
 
 - **Owns:** versioned capability vocabulary, engine request/result schemas, compatibility rules, and contract-test requirements.
-- **Public operations:** install, validate installation, create/validate identity, start, stop, probe fingerprint, validate migration, report capabilities.
+- **Public operations:** validate core candidate/installation, create/validate identity, start, stop, probe fingerprint, validate migration, report capabilities.
 - **Depends on:** stable shared domain identifiers and protocol primitives only.
 - **Does not own:** any Camoufox/Chromium implementation or profile business policy.
 
@@ -32,7 +34,7 @@ Modules communicate only through public contracts. No module deep-imports anothe
 - **Owns:** translation between engine-contract requests and verified Camoufox launcher/configuration behavior.
 - **Depends on:** `engine-contract`, sidecar client, verified core catalogue.
 - **Does not own:** profile state transitions, migration approval, general process policy, storage, or UI.
-- **Audit gate:** `AUD-001` through `AUD-012`, `AUD-019`, `AUD-022`.
+- **Audit gate:** `AUD-001` through `AUD-012`, `AUD-019`, `AUD-022`, and `AUD-027` through `AUD-032`.
 
 ### `engine-chromium` (future placeholder)
 
@@ -43,21 +45,21 @@ Modules communicate only through public contracts. No module deep-imports anothe
 
 ### `profile-manager`
 
-- **Owns:** profile aggregate coordination, lifecycle commands, lock intent, and user-visible profile policy.
+- **Owns:** profile aggregate coordination, lifecycle commands, lock intent, user-visible profile policy, and—if ADR-0015 is accepted—the sole mutable active-core pointer and activation generation.
 - **Depends on:** application ports for identity, storage, engine, proxy, snapshots, and supervision.
 - **Does not own:** direct SQL, seed algorithms, raw process spawning, or engine configuration.
 
 ### `identity-manager`
 
-- **Owns:** creation of `profileSecret`, deterministic derivation policy, manifest validation, integrity hashes, schema migration, and baseline references.
+- **Owns:** creation of `profileSecret`, deterministic derivation policy, immutable manifest validation, integrity hashes, and identity-preserving schema migration.
 - **Depends on:** cryptographic and manifest repositories through ports.
 - **Does not own:** UI, process state, browser data directories, or acceptance of an unexpected probe result.
 
 ### `process-supervisor`
 
-- **Owns:** child process trees, lifecycle deadlines, exit information, orphan detection, kill escalation, and resource observation.
+- **Owns:** authoritative sidecar/browser process-tree records, sidecar spawn through the OS adapter, lifecycle deadlines, exit information, verified orphan handling, kill escalation, and resource observation.
 - **Depends on:** OS process adapter and sidecar protocol.
-- **Does not own:** identity mutation, fingerprint acceptance, snapshot content, or profile business transitions.
+- **Does not own:** engine-launcher translation, browser automation commands, identity mutation, fingerprint acceptance, snapshot content, or profile business transitions.
 
 ### `fingerprint-probe`
 
@@ -91,7 +93,7 @@ Modules communicate only through public contracts. No module deep-imports anothe
 
 ### `core-updater`
 
-- **Owns:** artifact catalogue, download staging, provenance verification, multi-core installation, canary coordination, and rollback retention.
+- **Owns:** artifact catalogue, download staging, provenance verification, engine-specific candidate validation orchestration, multi-core installation/finalization, canary coordination, and rollback retention.
 - **Depends on:** artifact transport, verifier, engine contract, migration and storage ports.
 - **Does not own:** arbitrary identity changes or deletion of the rollback target before policy permits.
 
@@ -121,10 +123,12 @@ Modules communicate only through public contracts. No module deep-imports anothe
 
 ### `browser-driver-sidecar`
 
-- **Owns:** launcher invocation, Playwright session, browser commands, browser events, fingerprint probe execution, and cookie operations authorized by the contract.
+- **Owns:** authorized engine-launcher invocation, Playwright session, browser commands, browser events, fingerprint probe execution, graceful browser-close requests, and cookie operations authorized by the contract.
 - **Depends on:** selected launcher, Playwright, protocol implementation.
-- **Does not own:** durable profile policy, database writes, identity generation, migration commit, or secret logging.
+- **Does not own:** durable process-tree authority, sidecar spawn, unrestricted forced termination, durable profile policy, database writes, identity generation, migration commit, or secret logging.
 - **Audit gate:** `AUD-012`, `AUD-024`.
+
+The cross-process responsibility split and asymmetric-crash rules are normative in [SIDECAR_PROCESS_MODEL.md](SIDECAR_PROCESS_MODEL.md).
 
 ## Forbidden dependency examples
 
@@ -135,4 +139,3 @@ Modules communicate only through public contracts. No module deep-imports anothe
 - Process supervisor → identity manifest writer.
 - Storage adapter → migration decision.
 - Sidecar → OS keychain values except via narrowly scoped, explicit secret-delivery design approved by security review.
-

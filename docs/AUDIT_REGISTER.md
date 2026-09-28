@@ -8,11 +8,13 @@ Allowed statuses: `NOT_STARTED`, `RESEARCHING`, `TEST_READY`, `BLOCKED`, `CONFIR
 
 Evidence quality: `NONE`, `HYPOTHESIS`, `DOCUMENTED`, `SOURCE_CONFIRMED`, `TEST_CONFIRMED`, `MULTI_ENV_CONFIRMED`.
 
-An item may become `CONFIRMED` only when its question has a supported answer. `RESOLVED` additionally requires the required decision/patch and regression coverage. Evidence records must identify exact source revisions or test artifacts.
+An item may become `CONFIRMED` only when its question has a supported answer. `RESOLVED` additionally requires the required decision/patch and regression coverage. Evidence records must identify exact source revisions or test artifacts. New work uses the report conventions in [docs/audit](audit/README.md), the execution plan in [research/camoufox](../research/camoufox/README.md), and the evidence-record policy in [research/camoufox/evidence](../research/camoufox/evidence/README.md).
 
 ## Phase 2 blocking summary
 
-Phase 2 is blocked by: `AUD-001`, `AUD-002`, `AUD-003`, `AUD-004`, `AUD-005`, `AUD-006`, `AUD-007`, `AUD-008`, `AUD-012`, `AUD-013`, `AUD-014`, `AUD-015`, `AUD-016`, `AUD-019`, `AUD-022`, `AUD-023`, and `AUD-024`. A go/no-go review may explicitly reject or accept a bounded risk, but may not treat missing evidence as confirmation.
+Phase 2 is blocked by: `AUD-001`, `AUD-002`, `AUD-003`, `AUD-004`, `AUD-005`, `AUD-006`, `AUD-007`, `AUD-008`, `AUD-012`, `AUD-013`, `AUD-014`, `AUD-015`, `AUD-016`, `AUD-019`, `AUD-022`, `AUD-023`, `AUD-024`, and the newly explicit surface/security scopes `AUD-027`–`AUD-034`. A go/no-go review may explicitly reject an engine or accept a bounded documented risk, but may not treat missing evidence as confirmation. Where an item requires packaged Phase 2 code for final testing, Phase 1 must at minimum approve the testable design, fixtures, and fail-closed gate; the item remains open until its evidence threshold is met.
+
+Phase 3 portability additionally requires an evidence-backed decision for `AUD-010`, `AUD-021`, and `AUD-026`; relevant `AUD-005`, `AUD-011`, and `AUD-022` constraints must be reflected in the supported data/host matrix.
 
 ## Items
 
@@ -380,15 +382,15 @@ Phase 2 is blocked by: `AUD-001`, `AUD-002`, `AUD-003`, `AUD-004`, `AUD-005`, `A
 - **Last updated date:** 2026-09-27
 - **Notes:** Twenty profiles is a measurement target, not a promised supported limit.
 
-### AUD-015 — MPL/LGPL/MIT distribution obligations
+### AUD-015 — Project and third-party distribution obligations
 
 - **Category:** Licensing and distribution
-- **Question:** What obligations apply when distributing Camoufox, Firefox-derived binaries, launcher/dependencies, modifications, and this application?
+- **Question:** Which project license will be selected, and what distinct obligations apply to this project, Camoufox, Firefox/MPL-covered components, launcher/dependencies, modifications, and binary distribution?
 - **Why it matters:** The product cannot ship legally without a compliant source, notice, and relinking/distribution plan where applicable.
 - **Current hypothesis:** Multiple licenses and binary/source-offer obligations may apply; exact conclusions require qualified review.
 - **Known evidence:** No license inventory or legal conclusion accepted in this repository.
 - **Evidence quality:** `HYPOTHESIS`
-- **Source files/documents to inspect:** Exact license files, notices, dependency manifests, binary contents, patch history, upstream distribution terms, and official license texts.
+- **Source files/documents to inspect:** The project-license decision, [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md), exact upstream license files/notices, dependency manifests, binary contents, patch history, distribution terms, and official license texts.
 - **Test procedure:** Build a software bill of materials and map each shipped artifact/file/modification to obligations; obtain legal review before distribution.
 - **Test environments:** Planned Windows installer/update and source-distribution channels.
 - **Expected result:** Approved compliance matrix, notice bundle, source availability procedure, and prohibited combinations if any.
@@ -397,14 +399,14 @@ Phase 2 is blocked by: `AUD-001`, `AUD-002`, `AUD-003`, `AUD-004`, `AUD-005`, `A
 - **Probability:** Unknown
 - **Impact:** Inability to distribute, takedown, or forced redesign.
 - **Blocks phase:** Phase 2
-- **Required decision:** Go/no-go for distribution model and modification strategy.
+- **Required decision:** Select the project license separately from approving the third-party compliance and binary-distribution model; obtain qualified legal review before distribution.
 - **Required patch:** Compliance packaging/process changes; code changes only if required.
 - **Regression test:** Automated license/SBOM/notice check in release pipeline plus periodic legal review.
 - **Owner:** Unassigned; legal counsel required
 - **Status:** `NOT_STARTED`
 - **Created date:** 2026-09-27
 - **Last updated date:** 2026-09-27
-- **Notes:** This item records engineering due diligence, not legal advice.
+- **Notes:** This item records engineering due diligence, not legal advice. A public repository is not evidence that downstream use or redistribution is licensed.
 
 ### AUD-016 — Core download, checksum, and signature verification
 
@@ -614,18 +616,18 @@ Phase 2 is blocked by: `AUD-001`, `AUD-002`, `AUD-003`, `AUD-004`, `AUD-005`, `A
 - **Last updated date:** 2026-09-27
 - **Notes:** Popularity metrics alone are insufficient.
 
-### AUD-024 — Sidecar protocol and crash recovery
+### AUD-024 — Sidecar topology, protocol, process ownership, and crash recovery
 
 - **Category:** Inter-process architecture
-- **Question:** Which local transport, framing, authentication, version negotiation, idempotency, secret delivery, timeout, cancellation, event, and reconciliation semantics safely connect Rust and the sidecar?
+- **Question:** Which topology—per-profile sidecar, shared multi-profile sidecar, or shared supervisor with isolated worker per profile—and which transport, framing, authentication, version negotiation, idempotency, secret delivery, timeout, cancellation, event, Windows process-containment, ownership-proof, and reconciliation semantics safely connect Rust, sidecar workers, and browser trees?
 - **Why it matters:** Process ambiguity can duplicate launches, leak authority, or lose lifecycle state.
-- **Current hypothesis:** A request/response protocol needs explicit uncertain-outcome and process-adoption semantics; transport choice remains open.
+- **Current hypothesis:** The Rust supervisor can remain the durable tree authority while the sidecar invokes the launcher, but this requires explicit uncertain-outcome semantics, PID-reuse-resistant ownership evidence, and tested asymmetric-crash rules; transport and Windows primitives remain open.
 - **Known evidence:** Architectural requirements only; no protocol spike or threat test.
 - **Evidence quality:** `HYPOTHESIS`
-- **Source files/documents to inspect:** Candidate Windows IPC transports/libraries, launcher event models, Playwright lifecycle, OS access controls, and relevant threat guidance.
-- **Test procedure:** Prototype candidates; inject lost responses, duplicate requests, sidecar/core/browser crashes, stale endpoints, unauthorized clients, oversized frames, and version mismatch.
+- **Source files/documents to inspect:** [SIDECAR_PROCESS_MODEL.md](SIDECAR_PROCESS_MODEL.md), [ADR-0016](adr/0016-sidecar-topology.md), candidate Windows IPC and process/job containment APIs/libraries, launcher event/process models, Playwright lifecycle, OS access controls, and relevant threat guidance.
+- **Test procedure:** Prototype all three topology candidates; measure process/startup/steady resource cost and isolation; inject lost responses, duplicate requests, sidecar/core/browser crashes in every asymmetric combination, PID reuse/stale ownership records, stale endpoints, unauthorized clients, oversized frames, mixed versions, and version mismatch. Verify blast radius and that adopt/terminate behavior never launches twice or targets an unowned process.
 - **Test environments:** Supported Windows versions, multiple users/sessions where relevant, normal and crash/restart conditions.
-- **Expected result:** Selected transport and versioned protocol with authenticated instance, typed errors, idempotency, deadlines, and deterministic reconciliation.
+- **Expected result:** Evidence-backed topology plus selected transport and Windows ownership mechanism with isolated authenticated instances, bounded resource cost/blast radius, explicit compatibility, typed errors, idempotency, deadlines, verified tree identity, and deterministic reconciliation for core-dead, supervisor-dead, worker-dead, and browser-dead cases.
 - **Observed result:** Not observed.
 - **Severity:** Critical
 - **Probability:** High
@@ -665,6 +667,240 @@ Phase 2 is blocked by: `AUD-001`, `AUD-002`, `AUD-003`, `AUD-004`, `AUD-005`, `A
 - **Created date:** 2026-09-27
 - **Last updated date:** 2026-09-27
 - **Notes:** Reassess candidates at audit time; do not rely on stale repository rankings.
+
+### AUD-026 — Credential and authenticated-session boundary in browser state
+
+- **Category:** Portability and secret handling
+- **Question:** Which Camoufox/Firefox profile files, databases, key stores, OS-bound keys, and related metadata contain or enable recovery of saved credentials, authenticated sessions, tokens, or other account-bearing state, and can they be excluded selectively without corrupting supported restore semantics?
+- **Why it matters:** A raw user data directory may couple cookies, logins, encryption keys, preferences, and storage. The product must not promise both full-state fidelity and credential/session exclusion when those properties are incompatible.
+- **Current hypothesis:** Separately managed application/proxy credentials can be excluded reliably, but some browser-owned session or credential state may be opaque, interdependent, or protected by host-bound keys.
+- **Known evidence:** No accepted Camoufox/Firefox file inventory, key-linkage analysis, or sanitized/full-state round-trip evidence.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Pinned Camoufox/Firefox profile layout and credential/session storage code/docs, NSS/key databases, cookie/login/session/local-storage/extension storage, launcher copy logic, `AUD-005` inventory, and portability design.
+- **Test procedure:** Populate disposable profiles with uniquely tagged saved logins, cookies, authenticated sessions, local/IndexedDB/service-worker storage, extension credentials, and protected keys; inventory changed files and dependencies; test candidate sanitized and full-state exports, wrong-host/key conditions, omission failures, residual-secret scanning, and application usability after restore.
+- **Test environments:** Supported Windows versions, same host/different path and clean compatible host where allowed; disposable accounts and controlled services only.
+- **Expected result:** Evidence-backed per-data-type classification, key-dependency graph, safe exclusion/include rules, user-visible sensitivity labels, compatibility limits, and a decision to approve sanitized mode, explicitly sensitive full-state mode, both, or neither.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** High
+- **Impact:** Secret/session leakage, misleading backup claims, broken restores, or accidental account duplication.
+- **Blocks phase:** Phase 3 portability implementation; does not block Phase 2 MVP
+- **Required decision:** Approve exact Backup/Transfer/Duplicate data inventories and sensitivity UX; reject any mode whose safety and fidelity cannot both meet policy.
+- **Required patch:** Container filters, key-handling rules, explicit sensitive-mode design, or exclusion of unsupported browser-state classes.
+- **Regression test:** Seeded-sensitive-data round trip, exclusion, residual scan, wrong-key/host, and restored-usability matrix for every portability release.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** This item refines `AUD-005` and `AUD-021`; it does not assume selective exclusion is feasible.
+
+### AUD-027 — TLS, HTTP, and request-header coherence
+
+- **Category:** Network fingerprint
+- **Question:** Which TLS, HTTP/2 or later, protocol, and request-header surfaces are controlled by the pinned browser/launcher, and are they coherent with the declared browser identity and proxy path?
+- **Why it matters:** Script-visible identity can disagree with network-visible behavior.
+- **Current hypothesis:** Core version, proxy implementation, and launcher settings may alter observable network signatures.
+- **Known evidence:** No pinned-source inventory or controlled network capture accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Pinned core networking source/configuration, launcher arguments, proxy implementation, and protocol defaults.
+- **Test procedure:** Capture controlled requests for direct and supported proxy modes; compare TLS/client hello, negotiated protocols, HTTP settings, headers, redirects, service workers, and subresources against the identity manifest and baseline policy.
+- **Test environments:** Supported environment/proxy matrix with owned capture endpoints.
+- **Expected result:** Versioned surface catalogue, coherence rules, known uncontrollable fields, and fail-closed policy for required mismatches.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** Unknown
+- **Impact:** Cross-layer fingerprint inconsistency or network leakage.
+- **Blocks phase:** Phase 2 engine approval
+- **Required decision:** Approve the supported network-surface matrix or reject the candidate.
+- **Required patch:** TBD from evidence; adapter validation or upstream change.
+- **Regression test:** Pinned network-capture and semantic-diff suite.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Coordinate with `AUD-008`, `AUD-019`, and `AUD-028`.
+
+### AUD-028 — Locale, timezone, geolocation, and proxy coherence
+
+- **Category:** Cross-surface identity coherence
+- **Question:** Can configured locale, language, timezone, geolocation permissions/values, DNS/network region, and proxy exit be made internally coherent without hidden random fallback?
+- **Why it matters:** Conflicting regional signals are observable across browser and network surfaces.
+- **Current hypothesis:** Some values are configurable while host or proxy-derived values may remain outside launcher control.
+- **Known evidence:** No pinned-source mapping or cross-region test accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Locale/timezone/geolocation configuration consumers, permission paths, DNS/WebRTC behavior, proxy semantics, and OS locale inputs.
+- **Test procedure:** Run a region/locale/timezone/proxy matrix; probe main frame, workers, network headers, DNS/WebRTC, permissions, and navigation changes.
+- **Test environments:** Proposed supported locales, language packs, timezones, and proxy modes.
+- **Expected result:** Coherence constraints, supported combinations, revalidation triggers, and typed rejection for impossible combinations.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** Unknown
+- **Impact:** Identity inconsistency, location leakage, or false configuration claims.
+- **Blocks phase:** Phase 2 identity/proxy approval
+- **Required decision:** Select supported combinations and failure behavior.
+- **Required patch:** TBD; adapter validation or upstream fix.
+- **Regression test:** Cross-context regional-coherence matrix.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Proxy assignment remains mutable runtime configuration.
+
+### AUD-029 — Display, DPI, multi-monitor, and zoom behavior
+
+- **Category:** Render and host dependence
+- **Question:** How do Windows display scaling, multiple monitors, window movement, zoom, remote sessions, and display hot-plug affect configured and observed identity surfaces?
+- **Why it matters:** Display changes can create drift after preflight or expose host geometry.
+- **Current hypothesis:** Some observations are host/render-derived and may change while a profile is running.
+- **Known evidence:** No controlled display matrix accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Screen/window/media-query configuration paths, Firefox display handling, launcher window configuration, and Windows DPI behavior.
+- **Test procedure:** Probe before and after scaling, zoom, monitor moves/hot-plug, sleep/resume, and remote-session transitions; compare all contexts.
+- **Test environments:** Single/multiple monitors, proposed DPI values, GPU families, and Windows versions.
+- **Expected result:** Supported display envelope, host-dependent classifications, runtime revalidation triggers, and navigation containment on invalidation.
+- **Observed result:** Not observed.
+- **Severity:** High
+- **Probability:** Unknown
+- **Impact:** Runtime fingerprint drift or unusable profiles.
+- **Blocks phase:** Phase 2 supported-environment decision
+- **Required decision:** Approve supported display configurations and drift response.
+- **Required patch:** TBD; validation, relaunch requirement, or upstream patch.
+- **Regression test:** Display-transition semantic-diff suite.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Inputs belong in the environment descriptor, not immutable profile identity by default.
+
+### AUD-030 — Media devices and permission surfaces
+
+- **Category:** Identity and privacy
+- **Question:** How are media device enumeration, labels, stable IDs, capabilities, permissions, and device changes exposed across contexts and restarts?
+- **Why it matters:** Real or synthetic device surfaces can leak host identity or drift.
+- **Current hypothesis:** Permission state and installed hardware may affect visibility independently of configured presets.
+- **Known evidence:** No source trace or controlled device/permission matrix accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Media-device configuration and ID derivation, permission storage, browser profile files, WebRTC paths, and host enumeration.
+- **Test procedure:** Probe before/after permission decisions, restart, device add/remove, workers/iframes, restore/import, and different profiles.
+- **Test environments:** No-device, common camera/microphone combinations, and virtual-device fixtures where controlled.
+- **Expected result:** Surface ownership map, deterministic/persistent fields, privacy constraints, and supported permission behavior.
+- **Observed result:** Not observed.
+- **Severity:** High
+- **Probability:** Unknown
+- **Impact:** Host leakage, cross-profile correlation, or broken sites.
+- **Blocks phase:** Phase 2 identity-surface decision
+- **Required decision:** Approve supported media-device policy or disable unsupported claims.
+- **Required patch:** TBD from evidence.
+- **Regression test:** Media permission/device lifecycle matrix.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Coordinate with `AUD-006`, `AUD-019`, and `AUD-022`.
+
+### AUD-031 — Windows binary, process, and path hardening
+
+- **Category:** Platform security
+- **Question:** Can the application, sidecar, browser artifacts, working directories, DLL search, environment, handles, and process creation be hardened against substitution and path redirection on supported Windows systems?
+- **Why it matters:** The application executes sensitive binaries and processes attacker-controlled browser data.
+- **Current hypothesis:** Default process/path behavior is insufficient without explicit validation and ACL policy.
+- **Known evidence:** No packaged-binary or adversarial path test accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Planned packaging/process adapter, Windows process/DLL/path APIs, artifact layout, ACL design, upstream binary loading, and reparse handling.
+- **Test procedure:** Attempt DLL/path substitution, writable-parent execution, environment injection, handle inheritance, junction/reparse escape, alternate data streams, long/UNC paths, and executable replacement.
+- **Test environments:** Supported Windows/filesystem/security-tool matrix with standard-user installs.
+- **Expected result:** Canonical-path and artifact verification, safe process creation, explicit DLL policy, minimal inherited state, ACL requirements, and fail-closed errors.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** Unknown
+- **Impact:** Local code execution, profile compromise, or cross-profile data access.
+- **Blocks phase:** Phase 2 process/storage design; final packaged proof in Phase 5
+- **Required decision:** Approve Windows hardening baseline and unsupported path/install conditions.
+- **Required patch:** Application/sidecar hardening; upstream patch if browser loading cannot be bounded.
+- **Regression test:** Adversarial Windows path/process harness.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Coordinate with `AUD-016`, `AUD-017`, and `SEC-004`.
+
+### AUD-032 — Preflight TOCTOU and revalidation triggers
+
+- **Category:** Lifecycle assurance
+- **Question:** Which events can invalidate preflight after observation, how quickly can they occur, and what containment/revalidation action is reliable?
+- **Why it matters:** A valid preflight can become stale before or during external navigation.
+- **Current hypothesis:** Core migration, proxy/display/monitor/extension changes, GPU restart, sleep/resume, import/recovery, and browser restart may invalidate some observations.
+- **Known evidence:** Design requirements only; no trigger or race experiment accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Browser lifecycle/events, GPU/display/network changes, extension and session restore behavior, launcher events, and [FINGERPRINT_SPEC.md](FINGERPRINT_SPEC.md).
+- **Test procedure:** Inject each trigger before, during, and after probes and navigation admission; test event loss, rapid changes, stale results, cancellation, and candidate-baseline behavior.
+- **Test environments:** Supported environment matrix with controlled proxy/display/GPU/sleep fixtures.
+- **Expected result:** Trigger catalogue, validity token/generation rule, race-free navigation and lease gate, timeout behavior, and explicit revalidation policy.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** High
+- **Impact:** Unverified identity escapes containment or drift is auto-accepted.
+- **Blocks phase:** Phase 2 preflight design and launch gate
+- **Required decision:** Approve validity-generation and containment semantics.
+- **Required patch:** Lifecycle/adapter integration after Phase 1 design approval.
+- **Regression test:** Trigger/race/fault-injection suite.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Baseline replacement is never an automatic revalidation response.
+
+### AUD-033 — Tauri/WebView IPC and renderer hardening
+
+- **Category:** Desktop application security
+- **Question:** Which Tauri/WebView IPC exposure, content policy, navigation, deep-link, updater, plugin, serialization, and capability settings keep renderer compromise from reaching filesystem, database, process, or secret authority?
+- **Why it matters:** Browser-rendered UI content is outside the trusted core boundary.
+- **Current hypothesis:** A narrow command allowlist and schema validation are required; exact framework-version controls remain unselected.
+- **Known evidence:** Architecture requirements only; Tauri is not scaffolded and no configuration was tested.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Selected Tauri/WebView versions and official security guidance, planned IPC bindings, CSP/navigation configuration, plugin permissions, and updater design.
+- **Test procedure:** Threat-model and test malicious renderer payloads, navigation, oversized/malformed messages, command confusion, deep links, plugin abuse, secret reflection, and update IPC.
+- **Test environments:** Selected packaged Phase 2 stack on supported Windows versions.
+- **Expected result:** Version-pinned IPC threat model, allowlist, schema/size validation, capability separation, CSP/navigation policy, and negative tests.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** Unknown
+- **Impact:** Trusted-core compromise, arbitrary process/filesystem access, or secret disclosure.
+- **Blocks phase:** Phase 2 scaffold design; runtime closure before Phase 2 exit
+- **Required decision:** Approve IPC surface and framework security baseline.
+- **Required patch:** Phase 2 shell/binding configuration and tests.
+- **Regression test:** Renderer-to-core authorization and fuzz/negative suite.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** This audit does not authorize scaffolding during Phase 1 documentation work.
+
+### AUD-034 — Protected secrets and same-user local threat limits
+
+- **Category:** Secret storage and local trust
+- **Question:** Which Windows protected-storage mechanism, ACL, unlock/recovery behavior, and local-channel controls are achievable, and what attacks remain possible from another process running as the same user?
+- **Why it matters:** Local-only does not make secrets or IPC safe from same-user malware, debuggers, dumps, or process inspection.
+- **Current hypothesis:** OS protection can reduce accidental disclosure and at-rest theft but cannot fully defend against a compromised same-user session.
+- **Known evidence:** No keychain implementation, threat test, or recovery decision accepted.
+- **Evidence quality:** `HYPOTHESIS`
+- **Source files/documents to inspect:** Windows credential/data-protection facilities, selected libraries, crash dump/logging behavior, named-pipe/local transport ACLs, backup/recovery requirements, and diagnostic tooling.
+- **Test procedure:** Test at-rest copying, wrong-user/session access, same-user client impersonation, dump/log/env/argv leakage, credential rotation, OS reinstall/migration, backup recovery, and endpoint ACL bypass attempts.
+- **Test environments:** Standard-user and multiple-user Windows test environments with documented security context.
+- **Expected result:** Approved protected-store boundary, explicit same-user limitations, recovery/portability behavior, ACL/authentication policy, and user-facing risk statement.
+- **Observed result:** Not observed.
+- **Severity:** Critical
+- **Probability:** Unknown
+- **Impact:** Identity, proxy, API, or export-key disclosure and unauthorized local control.
+- **Blocks phase:** Phase 2 secret/IPC design; portability specifics block Phase 3
+- **Required decision:** Select protected store and accept/document residual same-user risk.
+- **Required patch:** Phase 2 protected-store and channel controls.
+- **Regression test:** Seeded-secret leakage and unauthorized-client matrix.
+- **Owner:** Unassigned
+- **Status:** `NOT_STARTED`
+- **Created date:** 2026-09-28
+- **Last updated date:** 2026-09-28
+- **Notes:** Coordinate with `AUD-018`, `AUD-024`, `AUD-026`, and the [Threat Model](THREAT_MODEL.md).
 
 ## Register maintenance
 

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:identity-manifest:1",
+  "title": "Identity Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "manifestVersion", "profileId", "engineId", "profileSecretRef", "lineage", "derivation", "identityInputs", "compatibilityConstraints", "integrity"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "manifestVersion": { "type": "integer", "minimum": 1, "maximum": 2147483647 },
+    "profileId": { "type": "string", "format": "uuid" },
+    "engineId": { "type": "string", "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+    "profileSecretRef": { "type": "string", "minLength": 8, "maxLength": 256, "x-sensitive": "reference-only" },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lineageId", "createdAt", "origin"],
+      "properties": {
+        "lineageId": { "type": "string", "format": "uuid" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "origin": { "enum": ["CREATED", "BACKUP_IMPORT", "TRANSFER_IMPORT"] }
+      }
+    },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespace", "version", "devicePresetVersion"],
+      "properties": {
+        "namespace": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "version": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "devicePresetVersion": { "type": "string", "minLength": 1, "maxLength": 128 }
+      }
+    },
+    "identityInputs": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 256,
+      "additionalProperties": { "type": ["string", "number", "integer", "boolean", "array", "object", "null"] },
+      "x-sensitive": true
+    },
+    "compatibilityConstraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identitySchema", "requiredCapabilities"],
+      "properties": {
+        "identitySchema": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "requiredCapabilities": { "type": "array", "maxItems": 256, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 128 } },
+        "environmentPolicyRef": { "type": ["string", "null"], "maxLength": 256 }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "digest"],
+      "properties": {
+        "algorithm": { "enum": ["SHA-256"] },
+        "digest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" }
+      }
+    }
+  }
+}
+

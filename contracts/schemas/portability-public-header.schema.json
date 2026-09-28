@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:portability-public-header:1",
+  "title": "Portability Container Public Header",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "magic", "formatVersion", "containerId", "mode", "createdAt", "sourcePlatform", "cipherSuite", "kdfProfile", "encryptedPayloadBytes", "authenticatedIndexDigest", "requiredReaderCapabilities"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "magic": { "const": "MULTI-PROFILES-PORTABILITY" },
+    "formatVersion": { "type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$" },
+    "containerId": { "type": "string", "format": "uuid" },
+    "mode": { "enum": ["BACKUP", "TRANSFER", "DUPLICATE_AS_NEW"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "sourcePlatform": { "enum": ["WINDOWS"] },
+    "cipherSuite": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "kdfProfile": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "encryptedPayloadBytes": { "type": "integer", "minimum": 0, "maximum": 1099511627776 },
+    "authenticatedIndexDigest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+    "requiredReaderCapabilities": { "type": "array", "maxItems": 64, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 128 } }
+  },
+  "description": "This unauthenticated bounded header intentionally excludes profile identity, name, URLs, credentials, secret references, content inventory, and compatibility details. Those belong inside authenticated encrypted content."
+}

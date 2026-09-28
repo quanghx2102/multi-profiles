@@ -13,5 +13,4 @@ Install cores side by side and migrate profiles through verification, compatibil
 
 ## Consequences
 
-Disk use and migration complexity increase. Byte-identical fingerprints are not required across versions, but immutable identity drift and unexplained cross-context changes are forbidden. `AUD-009`, `AUD-016`, and `AUD-020` must establish feasibility.
-
+Disk use and migration complexity increase. Byte-identical fingerprints are not required across versions; comparison follows [ADR-0011](0011-semantic-fingerprint-comparison.md), while immutable identity drift and unexplained cross-context changes are forbidden. `AUD-009`, `AUD-016`, and `AUD-020` must establish feasibility.

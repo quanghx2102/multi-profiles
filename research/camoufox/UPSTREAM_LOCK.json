@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "lockFormatVersion": "1.0.0",
+  "verificationStatus": "UNSELECTED",
+  "repository": {
+    "url": null,
+    "commit": null,
+    "tagOrRelease": null,
+    "selectionDate": null,
+    "selectedBy": null
+  },
+  "firefoxBase": {
+    "repositoryOrSourceUrl": null,
+    "revisionOrVersion": null,
+    "sha256": null
+  },
+  "launcher": {
+    "language": "UNSELECTED",
+    "sourcePathOrRepository": null,
+    "commitOrVersion": null,
+    "artifactSha256": null
+  },
+  "generatorDependencies": [
+    {
+      "name": "BrowserForge-or-selected-equivalent",
+      "repository": null,
+      "commitOrVersion": null,
+      "artifactSha256": null,
+      "verificationStatus": "UNSELECTED"
+    }
+  ],
+  "platformArtifact": {
+    "platform": "windows",
+    "architecture": "UNSELECTED",
+    "sourceUrl": null,
+    "fileName": null,
+    "sha256": null,
+    "signatureOrProvenance": null
+  },
+  "licenseSnapshot": {
+    "status": "UNSELECTED",
+    "capturedAt": null,
+    "files": [],
+    "legalReviewReference": null
+  },
+  "notes": "No source revision, release, artifact, hash, launcher, Firefox base, dependency set, or license conclusion has been selected or verified."
+}
+

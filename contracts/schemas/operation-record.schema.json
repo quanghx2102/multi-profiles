@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:operation-record:1",
+  "title": "Operation Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "operationId", "correlationId", "kind", "state", "createdAt", "updatedAt", "deadlineUtc", "profileIds", "idempotencyKeyHash", "retryEligibility", "priorStateRefs", "targetStateRefs", "lastEventId"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "operationId": { "type": "string", "format": "uuid" },
+    "correlationId": { "type": "string", "format": "uuid" },
+    "kind": { "enum": ["CREATE_PROFILE", "START_PROFILE", "STOP_PROFILE", "RECONCILE_PROFILE", "ARCHIVE_PROFILE", "UNARCHIVE_PROFILE", "DELETE_TO_TRASH", "PURGE_PROFILE", "CREATE_SNAPSHOT", "RESTORE_SNAPSHOT", "EXPORT", "IMPORT", "INSTALL_CORE", "MIGRATE_CORE", "ROLLBACK_CORE", "AUTOMATION_JOB", "BULK_PARENT"] },
+    "state": { "enum": ["PREPARED", "EFFECTING", "COMMITTING", "SUCCEEDED", "FAILED", "CANCELLED", "OUTCOME_UNKNOWN", "RECONCILING"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "deadlineUtc": { "type": ["string", "null"], "format": "date-time" },
+    "profileIds": { "type": "array", "maxItems": 10000, "uniqueItems": true, "items": { "type": "string", "format": "uuid" } },
+    "idempotencyKeyHash": { "type": ["string", "null"], "pattern": "^[A-Fa-f0-9]{64}$", "x-sensitive": true },
+    "retryEligibility": { "enum": ["NOT_RETRYABLE", "RETRY_AFTER_RECONCILIATION", "RETRY_WITH_NEW_OPERATION", "RETRY_SAME_IDEMPOTENCY_KEY"] },
+    "priorStateRefs": { "type": "object", "maxProperties": 64, "additionalProperties": { "type": ["string", "integer", "null"] } },
+    "targetStateRefs": { "type": "object", "maxProperties": 64, "additionalProperties": { "type": ["string", "integer", "null"] } },
+    "lastEventId": { "type": ["string", "null"], "format": "uuid" }
+  }
+}
+

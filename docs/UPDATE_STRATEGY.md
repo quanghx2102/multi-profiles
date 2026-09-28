@@ -21,12 +21,15 @@ Multiple immutable core installations coexist. Each installation records engine,
 1. Discover metadata without activating it.
 2. Download to an untrusted staging area.
 3. Verify expected checksum and signature/provenance policy (`AUD-016`).
-4. Install immutably alongside existing cores.
-5. Run installation, launcher, contract, persistence, proxy, probe, and resource qualification.
-6. Canary on disposable fixtures, then selected recoverable profiles.
-7. Produce a semantic migration report.
-8. Apply according to user policy.
-9. Retain the prior core and recovery snapshot until rollback retention expires.
+4. Ask the engine adapter to validate the staged candidate layout, compatibility, and launch prerequisites without installing it.
+5. Let `core-updater` finalize the authorized candidate immutably alongside existing cores.
+6. Run installation, launcher, contract, persistence, proxy, probe, and resource qualification.
+7. Canary on disposable fixtures, then selected recoverable profiles.
+8. Produce a semantic migration report.
+9. Apply according to user policy.
+10. Retain the prior core and recovery snapshot until rollback retention expires.
+
+`core-updater` owns download, provenance authorization, installation finalization, catalogue state, and retention. The engine adapter supplies engine-specific validation only and cannot bypass artifact policy.
 
 ## Semantic fingerprint policy
 
@@ -44,6 +47,21 @@ Before migration, create a safe checkpoint, persist the prior core/baseline poin
 
 Rollback must never silently downgrade storage that the old core cannot read. That compatibility is an explicit test result under `AUD-020`.
 
+```mermaid
+flowchart TD
+    P[Prepare operation and profile lock] --> S[Verified recovery checkpoint]
+    S --> Q[Qualify candidate without pointer mutation]
+    Q --> L[Launch candidate in LAUNCHED_UNVERIFIED]
+    L --> F{Preflight and policy pass?}
+    F -- yes --> C[Atomically commit activeCoreId, acceptedBaselineId, activationGeneration]
+    F -- no --> T[Terminate candidate and preserve evidence]
+    T --> R{Old core and storage rollback verified?}
+    R -- yes --> O[Reactivate old activation unit and re-run preflight]
+    R -- no --> X[Quarantine; reconcile uncertain outcome]
+```
+
+The activation unit follows the recommendation in [Data Authority](DATA_AUTHORITY.md) and [ADR-0015](adr/0015-profile-owned-active-core-pointer.md), which remain `Proposed`. Until approved, an implementation must not introduce a second mutable core pointer. Reconciliation compares the journaled intended generation with the authoritative profile record, baseline record, installed-core catalogue, checkpoint, and observed process tree; intent alone never completes a commit.
+
 ## Change isolation
 
 A core migration does not simultaneously change proxy assignment, OS/device preset, profile secret, identity seeds, extension set, or unrelated application schema. Isolating change makes semantic diagnosis and rollback meaningful.
@@ -51,4 +69,3 @@ A core migration does not simultaneously change proxy assignment, OS/device pres
 ## Anti-tampering and downgrade
 
 The updater rejects untrusted or mismatched artifacts and records provenance. Downgrade is allowed only by an explicit rollback or pinned-policy path whose compatibility is known; arbitrary version substitution is rejected. The exact trust roots and distribution mechanism remain subject to `AUD-016` and licensing to `AUD-015`.
-

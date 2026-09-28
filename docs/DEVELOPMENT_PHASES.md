@@ -15,12 +15,22 @@ The roadmap is a decision framework, not a calendar estimate. A phase advances b
 
 ## Phase map
 
+```mermaid
+flowchart LR
+    P1[Phase 1<br/>audit evidence] -->|GO or conditional GO| P2[Phase 2<br/>local desktop MVP]
+    P2 --> P3[Phase 3<br/>data safety and portability]
+    P3 --> P4A[Phase 4A<br/>update, bulk, API, lease]
+    P4A --> P5[Phase 5<br/>production hardening]
+    P4A -. optional .-> P4B[Phase 4B<br/>typing, Cookie Bot, Run with Sync]
+    P4B -. evidence feeds .-> P5
+```
+
 | Phase | Outcome | Detail | Principal gates |
 |---|---|---|---|
 | 1 | Evidence-backed Camoufox and architecture go/no-go | [Phase 1 specification](phases/PHASE_1_AUDIT_AND_TECHNICAL_SPIKE.md) | Phase 2 blockers in the audit register |
 | 2 | Safe local desktop MVP for profile lifecycle | [Phase 2 specification](phases/PHASE_2_LOCAL_DESKTOP_MVP.md) | Qualified engine/sidecar, deterministic identity, isolation, crash recovery |
 | 3 | Recoverable data and encrypted portability | [Phase 3 specification](phases/PHASE_3_DATA_SAFETY_AND_PORTABILITY.md) | Snapshot consistency, portability, extension and key-management decisions |
-| 4 | Staged core updates, automation, and bulk operations | [Phase 4 specification](phases/PHASE_4_CORE_UPDATE_AUTOMATION_AND_BULK.md) | Migration/rollback, supply-chain trust, local API security |
+| 4 | Mandatory staged update/bulk/API/lease track plus optional automation behaviors | [Phase 4 specification](phases/PHASE_4_CORE_UPDATE_AUTOMATION_AND_BULK.md) | Migration/rollback, supply-chain trust, local API security |
 | 5 | Production hardening and engine-extensibility decision | [Phase 5 specification](phases/PHASE_5_PRODUCTION_HARDENING_AND_EXTENSIBILITY.md) | Release security, Windows distribution, operational evidence, Chromium spike |
 
 ## Sequencing rules
@@ -89,4 +99,3 @@ A phase exit review produces one of:
 ## Cross-phase quality threads
 
 Identity integrity, profile isolation, crash consistency, supply-chain trust, secret containment, diagnostics, and test reproducibility are continuous threads. They do not become “finished” in one phase; each later phase must demonstrate that new capabilities preserve them.
-

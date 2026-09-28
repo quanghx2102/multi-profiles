@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:fingerprint-probe:1",
+  "title": "Fingerprint Probe Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "probeSchemaVersion", "probeRunId", "profileId", "engineId", "coreId", "environmentId", "environmentGeneration", "capturedAt", "contexts", "observations", "coverageRefs", "complete"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "probeSchemaVersion": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "probeRunId": { "type": "string", "format": "uuid" },
+    "profileId": { "type": "string", "format": "uuid" },
+    "engineId": { "type": "string", "pattern": "^[a-z][a-z0-9.-]{1,63}$" },
+    "coreId": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "environmentId": { "type": "string", "pattern": "^ENV-[A-Z0-9-]{3,64}$" },
+    "environmentGeneration": { "type": "integer", "minimum": 0 },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "contexts": { "type": "array", "minItems": 1, "maxItems": 32, "uniqueItems": true, "items": { "enum": ["MAIN_FRAME", "SAME_ORIGIN_IFRAME", "CROSS_ORIGIN_IFRAME", "DEDICATED_WORKER", "SHARED_WORKER", "SERVICE_WORKER", "WORKLET", "NETWORK", "NATIVE"] } },
+    "observations": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surfaceId", "context", "classification", "normalizedValue", "rawArtifactRef", "status"],
+        "properties": {
+          "surfaceId": { "type": "string", "pattern": "^SURFACE-[A-Z0-9-]{3,96}$" },
+          "context": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "classification": { "enum": ["IMMUTABLE", "VERSION_DERIVED", "RENDER_DERIVED", "HOST_DEPENDENT", "NETWORK_DERIVED", "INFORMATIONAL"] },
+          "normalizedValue": { "type": ["string", "number", "integer", "boolean", "array", "object", "null"], "x-sensitive": true },
+          "rawArtifactRef": { "type": ["string", "null"], "maxLength": 512, "x-sensitive": true },
+          "status": { "enum": ["OBSERVED", "UNSUPPORTED", "ERROR", "NOT_APPLICABLE"] }
+        }
+      }
+    },
+    "coverageRefs": { "type": "array", "maxItems": 4096, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 256 } },
+    "complete": { "type": "boolean" }
+  }
+}
+

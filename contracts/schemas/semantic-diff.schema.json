@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:multi-profiles:schema:semantic-diff:1",
+  "title": "Semantic Fingerprint Diff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "policyVersion", "diffId", "profileId", "baselineId", "candidateProbeRunId", "createdAt", "decision", "entries", "missingMandatorySurfaces", "reviewedBy"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "policyVersion": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "diffId": { "type": "string", "format": "uuid" },
+    "profileId": { "type": "string", "format": "uuid" },
+    "baselineId": { "type": "string", "format": "uuid" },
+    "candidateProbeRunId": { "type": "string", "format": "uuid" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "decision": { "enum": ["PASS", "REVIEW_REQUIRED", "FAIL", "INCOMPLETE"] },
+    "entries": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surfaceId", "context", "class", "ruleId", "baselineValue", "candidateValue", "reason"],
+        "properties": {
+          "surfaceId": { "type": "string", "pattern": "^SURFACE-[A-Z0-9-]{3,96}$" },
+          "context": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "class": { "enum": ["EXPECTED", "REVIEW_REQUIRED", "FORBIDDEN", "UNKNOWN"] },
+          "ruleId": { "type": ["string", "null"], "maxLength": 128 },
+          "baselineValue": { "type": ["string", "number", "integer", "boolean", "array", "object", "null"], "x-sensitive": true },
+          "candidateValue": { "type": ["string", "number", "integer", "boolean", "array", "object", "null"], "x-sensitive": true },
+          "reason": { "type": "string", "minLength": 1, "maxLength": 1024 }
+        }
+      }
+    },
+    "missingMandatorySurfaces": { "type": "array", "maxItems": 4096, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 128 } },
+    "reviewedBy": { "type": ["string", "null"], "maxLength": 256 }
+  }
+}
+
