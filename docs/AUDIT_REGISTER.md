@@ -24,13 +24,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Which Camoufox, launcher, BrowserForge, Firefox, and host paths introduce randomness into configured or observed fingerprint surfaces?
 - **Why it matters:** Uncontrolled randomness can change a profile identity after restart.
 - **Current hypothesis:** More random inputs may exist than the planned manifest fields cover.
-- **Known evidence:** No evidence accepted; the conversation only identified this risk.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-001-001` source review confirms default per-launch random assignment for `fonts:spacing_seed`, `audio:seed`, and `canvas:seed`; the inventory is not complete.
+- **Evidence quality:** `SOURCE_CONFIRMED`
 - **Source files/documents to inspect:** Exact pinned Camoufox source, patches, launcher source, fingerprint generator dependencies, defaults, and release notes.
 - **Test procedure:** Trace random sources and configuration consumers; instrument two identically configured launches and repeated relaunches; map every varying observation to a source or host dependency.
 - **Test environments:** Supported Windows versions; at least two hardware/GPU configurations; pinned core and launcher revisions.
 - **Expected result:** Complete inventory with controllable, intentionally random-per-profile, host-derived, and uncontrolled classifications.
-- **Observed result:** Not observed.
+- **Observed result:** Three explicit randomized seed paths were confirmed in the pinned Python launcher. One offline launch produced a bounded observation, but it used default random inputs and is not a determinism test.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Identity drift and false persistence guarantees.
@@ -38,11 +38,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Define the minimum deterministic surface set and Camoufox go/no-go condition.
 - **Required patch:** TBD from source evidence; fail fast for any required uncontrolled seed.
 - **Regression test:** Seed-inventory assertion plus 50-restart fingerprint suite.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 identity audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** Coordinate with `AUD-002`, `AUD-003`, and `AUD-019`.
+- **Last updated date:** 2026-09-29
+- **Notes:** Coordinate with `AUD-002`, `AUD-003`, and `AUD-019`. Evidence: [initial spike report](../research/camoufox/experiments/EXP-AUD-001-001/REPORT.md).
 
 ### AUD-002 — Canvas, Audio, WebGL, and ClientRects persistence
 
@@ -50,13 +50,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Do these surfaces remain within approved semantic baselines across clean and crash relaunches using the same identity and data directory?
 - **Why it matters:** These are central promised identity surfaces.
 - **Current hypothesis:** Persistence may vary by surface, launcher path, and host rendering.
-- **Known evidence:** No accepted source or test evidence.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-003-001` records one main-frame/dedicated-worker smoke observation on an unqualified Windows 10 host.
+- **Evidence quality:** `DOCUMENTED`
 - **Source files/documents to inspect:** Pinned engine patches, surface configuration schema/consumers, launcher mapping, and relevant upstream tests/issues.
 - **Test procedure:** Establish a baseline, perform 50 clean relaunches and crash/recovery relaunches, compare normalized values and raw artifacts.
 - **Test environments:** Two Windows builds and at least two GPU/driver families; stable hardware and controlled locale/network.
 - **Expected result:** No unexplained immutable-input drift; render-derived variance is bounded and documented.
-- **Observed result:** Not observed.
+- **Observed result:** UA, platform, language, and hardware-concurrency values agreed between the main frame and one dedicated worker in one run. Iframes, shared/service workers, worklets, mutations, and repeated runs remain untested.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Same profile appears as different devices.
@@ -64,8 +64,8 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Accept/reject each surface and define preflight rules.
 - **Required patch:** TBD; adapter/configuration or upstream patch if a required surface is not persistent.
 - **Regression test:** 50-restart matrix per qualified core.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 identity audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-27
 - **Last updated date:** 2026-09-27
 - **Notes:** Raw fingerprint hash equality alone is insufficient.
@@ -93,8 +93,8 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Owner:** Unassigned
 - **Status:** `NOT_STARTED`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** Depends on the probe inventory in `AUD-019`.
+- **Last updated date:** 2026-09-29
+- **Notes:** Depends on the probe inventory in `AUD-019`. Evidence: [smoke result](../research/camoufox/experiments/EXP-AUD-001-001/smoke.json).
 
 ### AUD-004 — Multi-process Camoufox interference
 
@@ -128,13 +128,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Which cookies, storage types, history, preferences, permissions, certificates, extension state, and other data persist or do not persist in Camoufox's user data directory?
 - **Why it matters:** Stop/start, backup, and restore promises depend on exact ownership and flush behavior.
 - **Current hypothesis:** Persistence is not uniform and some state may live outside the directory or require graceful shutdown.
-- **Known evidence:** No accepted inventory or test evidence.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-005-001` contains two clean-close runs with one disposable persistent context on the same host/core.
+- **Evidence quality:** `DOCUMENTED`
 - **Source files/documents to inspect:** Camoufox launcher/profile handling, Firefox profile documentation/source relevant to the pinned core, cleanup logic, upstream persistence tests/issues.
 - **Test procedure:** Seed each storage/state type, clean-stop and crash, relaunch, snapshot/restore, and verify both persistence and cross-profile absence.
 - **Test environments:** Supported Windows builds; clean and upgraded profiles; representative extension fixtures.
 - **Expected result:** Versioned state inventory with backup inclusion, checkpoint, and recovery policy per type.
-- **Observed result:** Not observed.
+- **Observed result:** A first run retained LocalStorage and IndexedDB but correctly lost a session cookie; a retained rerun with a persistent cookie retained cookie, LocalStorage, and IndexedDB. This is not a state inventory or crash/portability result.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Session loss, leakage, or invalid backups.
@@ -142,11 +142,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Define supported persistent state and explicit exclusions.
 - **Required patch:** TBD; storage/checkpoint adapter or documented unsupported state.
 - **Regression test:** Persistent-state matrix for clean stop, crash, snapshot, and restore.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 persistence audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** Feeds Phase 3 export rules.
+- **Last updated date:** 2026-09-29
+- **Notes:** Feeds Phase 3 export rules. Evidence: [initial spike report](../research/camoufox/experiments/EXP-AUD-001-001/REPORT.md).
 
 ### AUD-006 — Generic-font nondeterminism on Windows
 
@@ -310,13 +310,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Does the Camoufox TypeScript launcher support the required persistent lifecycle and features with reliability equal to or better than the Python launcher?
 - **Why it matters:** This selects the initial sidecar implementation language without coupling Rust policy to it.
 - **Current hypothesis:** The launchers may differ in maturity, configuration coverage, and lifecycle behavior.
-- **Known evidence:** No accepted parity matrix or source audit.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-012-001` pins the official Python wrapper at `0.5.6`; discovery evidence identifies `camoufox-js` `0.12.0` as experimental with a Playwright constraint below `1.61.0`.
+- **Evidence quality:** `DOCUMENTED`
 - **Source files/documents to inspect:** Both official launcher sources, tests, schemas, releases, dependency constraints, and issue history at pinned revisions.
 - **Test procedure:** Run identical create/start/stop/persist/proxy/probe/error scenarios and compare features, events, crashes, and recovery.
 - **Test environments:** Supported Windows versions with identical Camoufox core artifacts.
 - **Expected result:** Evidence-backed sidecar language decision and documented gaps.
-- **Observed result:** Not observed.
+- **Observed result:** Python `0.5.6` launched the pinned beta.31 artifact with Playwright `1.62.0` and passed the initial smoke/checkpoint runs. A comparable TypeScript runtime was not installed or tested, so parity remains open.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Unstable lifecycle or missing configuration features.
@@ -324,11 +324,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Select TypeScript or Python and document fallback conditions.
 - **Required patch:** TBD; wrapper/adapter gaps only after parity is known.
 - **Regression test:** Shared launcher conformance suite.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 launcher audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** TypeScript is preferred only if evidence supports it.
+- **Last updated date:** 2026-09-29
+- **Notes:** Python is the current candidate because it is upstream-owned and tested against the pinned core; this is not a final language decision. Evidence: [initial spike report](../research/camoufox/experiments/EXP-AUD-001-001/REPORT.md).
 
 ### AUD-013 — Crash consistency during Start, Stop, and snapshot
 
@@ -388,13 +388,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Which project license will be selected, and what distinct obligations apply to this project, Camoufox, Firefox/MPL-covered components, launcher/dependencies, modifications, and binary distribution?
 - **Why it matters:** The product cannot ship legally without a compliant source, notice, and relinking/distribution plan where applicable.
 - **Current hypothesis:** Multiple licenses and binary/source-offer obligations may apply; exact conclusions require qualified review.
-- **Known evidence:** No license inventory or legal conclusion accepted in this repository.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-015-001` records MPL-2.0 at repository root, MIT in Python package metadata, and an explicit bundled-font notice limiting the fonts to academic/research use and stating commercial use/distribution is not intended or permitted. The Windows packaging path and downloaded artifact include cross-platform font bundles.
+- **Evidence quality:** `SOURCE_CONFIRMED`
 - **Source files/documents to inspect:** The project-license decision, [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md), exact upstream license files/notices, dependency manifests, binary contents, patch history, distribution terms, and official license texts.
 - **Test procedure:** Build a software bill of materials and map each shipped artifact/file/modification to obligations; obtain legal review before distribution.
 - **Test environments:** Planned Windows installer/update and source-distribution channels.
 - **Expected result:** Approved compliance matrix, notice bundle, source availability procedure, and prohibited combinations if any.
-- **Observed result:** Not observed.
+- **Observed result:** The current official Windows artifact is not cleared for product distribution. Qualified legal review and/or a verified redistributable font-free artifact/build path is required before shipping; other third-party obligations remain uninventoried.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Inability to distribute, takedown, or forced redesign.
@@ -402,11 +402,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Select the project license separately from approving the third-party compliance and binary-distribution model; obtain qualified legal review before distribution.
 - **Required patch:** Compliance packaging/process changes; code changes only if required.
 - **Regression test:** Automated license/SBOM/notice check in release pipeline plus periodic legal review.
-- **Owner:** Unassigned; legal counsel required
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 provenance audit; qualified legal counsel required
+- **Status:** `BLOCKED`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** This item records engineering due diligence, not legal advice. A public repository is not evidence that downstream use or redistribution is licensed.
+- **Last updated date:** 2026-09-29
+- **Notes:** This item records engineering due diligence, not legal advice. A public repository is not evidence that downstream use or redistribution is licensed. Evidence: [initial spike report](../research/camoufox/experiments/EXP-AUD-001-001/REPORT.md).
 
 ### AUD-016 — Core download, checksum, and signature verification
 
@@ -414,13 +414,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** What authenticated metadata and signatures are available for Camoufox core artifacts, and how can the updater establish provenance and prevent substitution/downgrade?
 - **Why it matters:** The application executes downloaded browser binaries with access to sensitive profile data.
 - **Current hypothesis:** Checksums may be available but the complete trust/signature model is unknown.
-- **Known evidence:** No release-channel or verification audit accepted.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-016-001` pins the official GitHub asset URL, size, and GitHub-provided SHA-256; the Camoufox downloader verified the digest before extraction. The annotated source tag has no signature and no detached artifact signature was found.
+- **Evidence quality:** `SOURCE_CONFIRMED`
 - **Source files/documents to inspect:** Official release publishing workflow, release metadata/assets, signing keys/procedures, checksums, updater/launcher download code, and hosting controls.
 - **Test procedure:** Verify known artifacts, tamper metadata/artifacts, replay/downgrade versions, rotate keys, and test offline/failed verification behavior.
 - **Test environments:** Controlled update server fixtures plus actual pinned official release channel.
 - **Expected result:** Documented trust roots, verified metadata chain, fail-closed behavior, and recovery/key-rotation plan.
-- **Observed result:** Not observed.
+- **Observed result:** Digest verification works for beta.31, but the asset is attached to `font-bundle-v1`, the source tag is unsigned, and no independent signed trust chain or reproducible-build equivalence is established.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Arbitrary code execution or malicious downgrade.
@@ -428,11 +428,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Select artifact source and verification policy or require separately provisioned cores.
 - **Required patch:** Updater/verifier implementation or upstream release-process improvement.
 - **Regression test:** Tampered, stale, replayed, and valid artifact fixtures.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 provenance audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** A checksum fetched from the same unauthenticated source is not independent trust.
+- **Last updated date:** 2026-09-29
+- **Notes:** A checksum fetched from the same release authority is integrity metadata, not an independent signature. Evidence: [upstream lock](../research/camoufox/UPSTREAM_LOCK.json).
 
 ### AUD-017 — Windows Defender, SmartScreen, and antivirus compatibility
 
@@ -619,16 +619,16 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 ### AUD-024 — Sidecar topology, protocol, process ownership, and crash recovery
 
 - **Category:** Inter-process architecture
-- **Question:** Which topology—per-profile sidecar, shared multi-profile sidecar, or shared supervisor with isolated worker per profile—and which transport, framing, authentication, version negotiation, idempotency, secret delivery, timeout, cancellation, event, Windows process-containment, ownership-proof, and reconciliation semantics safely connect Rust, sidecar workers, and browser trees?
+- **Question:** Which topology—dedicated sidecar worker per profile, shared multi-profile sidecar, or shared sidecar coordinator with isolated worker per profile—and which transport, framing, authentication, version negotiation, idempotency, secret delivery, timeout, cancellation, event, Windows process-containment, ownership-proof, and reconciliation semantics safely connect the Rust supervisor, sidecar process or processes, and browser trees?
 - **Why it matters:** Process ambiguity can duplicate launches, leak authority, or lose lifecycle state.
 - **Current hypothesis:** The Rust supervisor can remain the durable tree authority while the sidecar invokes the launcher, but this requires explicit uncertain-outcome semantics, PID-reuse-resistant ownership evidence, and tested asymmetric-crash rules; transport and Windows primitives remain open.
-- **Known evidence:** Architectural requirements only; no protocol spike or threat test.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-024-001` defines and unit-tests 1 MiB length-prefixed JSON framing and session-bound HMAC challenge proof; `EVD-AUD-031-001` proves a synthetic suspended process can be assigned before resume to a kill-on-close Job Object.
+- **Evidence quality:** `DOCUMENTED`
 - **Source files/documents to inspect:** [SIDECAR_PROCESS_MODEL.md](SIDECAR_PROCESS_MODEL.md), [ADR-0016](adr/0016-sidecar-topology.md), candidate Windows IPC and process/job containment APIs/libraries, launcher event/process models, Playwright lifecycle, OS access controls, and relevant threat guidance.
 - **Test procedure:** Prototype all three topology candidates; measure process/startup/steady resource cost and isolation; inject lost responses, duplicate requests, sidecar/core/browser crashes in every asymmetric combination, PID reuse/stale ownership records, stale endpoints, unauthorized clients, oversized frames, mixed versions, and version mismatch. Verify blast radius and that adopt/terminate behavior never launches twice or targets an unowned process.
 - **Test environments:** Supported Windows versions, multiple users/sessions where relevant, normal and crash/restart conditions.
 - **Expected result:** Evidence-backed topology plus selected transport and Windows ownership mechanism with isolated authenticated instances, bounded resource cost/blast radius, explicit compatibility, typed errors, idempotency, deadlines, verified tree identity, and deterministic reconciliation for core-dead, supervisor-dead, worker-dead, and browser-dead cases.
-- **Observed result:** Not observed.
+- **Observed result:** Eleven protocol/Windows primitive tests passed. No named-pipe ACL, inherited bootstrap handle, real sidecar/browser tree, topology comparison, or asymmetric-crash test has run.
 - **Severity:** Critical
 - **Probability:** High
 - **Impact:** Duplicate browsers, unauthorized control, stuck locks, or false lifecycle state.
@@ -636,11 +636,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Accept protocol/transport and recovery state machine.
 - **Required patch:** Implement the approved boundary in Phase 2; upstream launcher changes if required.
 - **Regression test:** Protocol conformance, fuzz/property, authorization, and crash matrix.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 process/sidecar audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-27
-- **Last updated date:** 2026-09-27
-- **Notes:** Must stay language-neutral under ADR-0006.
+- **Last updated date:** 2026-09-29
+- **Notes:** Must stay language-neutral under ADR-0006. Candidate design: [Windows security boundaries](WINDOWS_SECURITY_BOUNDARIES.md).
 
 ### AUD-025 — Future Chromium adapter feasibility
 
@@ -804,13 +804,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Can the application, sidecar, browser artifacts, working directories, DLL search, environment, handles, and process creation be hardened against substitution and path redirection on supported Windows systems?
 - **Why it matters:** The application executes sensitive binaries and processes attacker-controlled browser data.
 - **Current hypothesis:** Default process/path behavior is insufficient without explicit validation and ACL policy.
-- **Known evidence:** No packaged-binary or adversarial path test accepted.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-031-001` proves the narrow CreateProcess-suspended → assign Job Object → resume → kill-on-close sequence with a synthetic Python child on Windows 10.
+- **Evidence quality:** `DOCUMENTED`
 - **Source files/documents to inspect:** Planned packaging/process adapter, Windows process/DLL/path APIs, artifact layout, ACL design, upstream binary loading, and reparse handling.
 - **Test procedure:** Attempt DLL/path substitution, writable-parent execution, environment injection, handle inheritance, junction/reparse escape, alternate data streams, long/UNC paths, and executable replacement.
 - **Test environments:** Supported Windows/filesystem/security-tool matrix with standard-user installs.
 - **Expected result:** Canonical-path and artifact verification, safe process creation, explicit DLL policy, minimal inherited state, ACL requirements, and fail-closed errors.
-- **Observed result:** Not observed.
+- **Observed result:** The containment primitive passed, but Camoufox descendants, breakaway behavior, explicit inherited-handle lists, DLL/path/reparse defenses, and packaged binaries remain untested.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Local code execution, profile compromise, or cross-profile data access.
@@ -818,11 +818,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Approve Windows hardening baseline and unsupported path/install conditions.
 - **Required patch:** Application/sidecar hardening; upstream patch if browser loading cannot be bounded.
 - **Regression test:** Adversarial Windows path/process harness.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 Windows security audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-28
-- **Last updated date:** 2026-09-28
-- **Notes:** Coordinate with `AUD-016`, `AUD-017`, and `SEC-004`.
+- **Last updated date:** 2026-09-29
+- **Notes:** Coordinate with `AUD-016`, `AUD-017`, and `SEC-004`. Candidate design: [Windows security boundaries](WINDOWS_SECURITY_BOUNDARIES.md).
 
 ### AUD-032 — Preflight TOCTOU and revalidation triggers
 
@@ -882,13 +882,13 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Question:** Which Windows protected-storage mechanism, ACL, unlock/recovery behavior, and local-channel controls are achievable, and what attacks remain possible from another process running as the same user?
 - **Why it matters:** Local-only does not make secrets or IPC safe from same-user malware, debuggers, dumps, or process inspection.
 - **Current hypothesis:** OS protection can reduce accidental disclosure and at-rest theft but cannot fully defend against a compromised same-user session.
-- **Known evidence:** No keychain implementation, threat test, or recovery decision accepted.
-- **Evidence quality:** `HYPOTHESIS`
+- **Known evidence:** `EVD-AUD-034-001` proves DPAPI CurrentUser round-trip and wrong-purpose-entropy rejection for synthetic bytes on one Windows 10 user. No production secret store or cross-user test exists.
+- **Evidence quality:** `DOCUMENTED`
 - **Source files/documents to inspect:** Windows credential/data-protection facilities, selected libraries, crash dump/logging behavior, named-pipe/local transport ACLs, backup/recovery requirements, and diagnostic tooling.
 - **Test procedure:** Test at-rest copying, wrong-user/session access, same-user client impersonation, dump/log/env/argv leakage, credential rotation, OS reinstall/migration, backup recovery, and endpoint ACL bypass attempts.
 - **Test environments:** Standard-user and multiple-user Windows test environments with documented security context.
 - **Expected result:** Approved protected-store boundary, explicit same-user limitations, recovery/portability behavior, ACL/authentication policy, and user-facing risk statement.
-- **Observed result:** Not observed.
+- **Observed result:** DPAPI CurrentUser is feasible as the protected-store primitive; it does not make ciphertext portable and does not defend against a compromised same-user session.
 - **Severity:** Critical
 - **Probability:** Unknown
 - **Impact:** Identity, proxy, API, or export-key disclosure and unauthorized local control.
@@ -896,11 +896,11 @@ Phase 3 portability additionally requires an evidence-backed decision for `AUD-0
 - **Required decision:** Select protected store and accept/document residual same-user risk.
 - **Required patch:** Phase 2 protected-store and channel controls.
 - **Regression test:** Seeded-secret leakage and unauthorized-client matrix.
-- **Owner:** Unassigned
-- **Status:** `NOT_STARTED`
+- **Owner:** Phase 1 protected-secret audit
+- **Status:** `RESEARCHING`
 - **Created date:** 2026-09-28
-- **Last updated date:** 2026-09-28
-- **Notes:** Coordinate with `AUD-018`, `AUD-024`, `AUD-026`, and the [Threat Model](THREAT_MODEL.md).
+- **Last updated date:** 2026-09-29
+- **Notes:** Coordinate with `AUD-018`, `AUD-024`, `AUD-026`, and the [Threat Model](THREAT_MODEL.md). Candidate design: [Windows security boundaries](WINDOWS_SECURITY_BOUNDARIES.md).
 
 ## Register maintenance
 

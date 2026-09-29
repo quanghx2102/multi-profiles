@@ -10,11 +10,11 @@ No topology is selected. [ADR-0016](adr/0016-sidecar-topology.md) is `Proposed`;
 
 | Candidate | Isolation | Resource cost | Crash blast radius | Authentication | Version compatibility | Adoption/reconciliation |
 |---|---|---|---|---|---|---|
-| One sidecar per running profile | Strongest protocol/process separation | Highest fixed overhead | Normally one profile | Unique per-instance credential and endpoint | Each instance binds one protocol/launcher version | Straightforward only if ownership survives supervisor restart |
+| One dedicated sidecar worker per running profile | Strongest protocol/process separation | Highest fixed overhead | Normally one profile | Unique per-instance credential and endpoint | Each instance binds one protocol/launcher version | Straightforward only if ownership survives supervisor restart |
 | One shared multi-profile sidecar | Logical isolation only | Lowest fixed overhead | All managed profiles | Per-client plus per-profile authorization | One process must negotiate all active versions | Complex multiplexed recovery and partial failure |
-| Shared supervisor with isolated worker per profile | Worker isolation with shared coordination | Medium | Worker failure local; supervisor failure broad | Supervisor channel plus unique worker capability | Supervisor/worker compatibility matrix required | Supervisor must persist or reconstruct worker ownership safely |
+| Shared sidecar coordinator with isolated worker per profile | Worker isolation plus a shared sidecar coordination layer | Highest process count unless shared services offset it | Worker failure local; coordinator failure broad | Coordinator channel plus unique worker capability | Coordinator/worker compatibility matrix required | Two-level recovery must remain subordinate to the Rust supervisor |
 
-Acceptance requires measured startup/steady memory, malicious-client isolation, asymmetric crash tests, mixed-version behavior, credential rotation, and verified process adoption/termination. The recommendation is the supervisor/isolated-worker model only if the spike shows it retains per-profile containment without an unacceptable supervisory single point of failure; otherwise prefer one sidecar per running profile. This recommendation is not an accepted decision.
+Acceptance requires measured startup/steady memory, malicious-client isolation, asymmetric crash tests, mixed-version behavior, credential rotation, and verified process adoption/termination. The recommendation is one dedicated sidecar worker per running profile because the common Rust supervisor already supplies shared policy and durable ownership. A shared sidecar coordinator is justified only if the spike demonstrates material benefit without creating a competing authority or unacceptable common failure point. This recommendation is not an accepted decision.
 
 ## Ownership chain
 

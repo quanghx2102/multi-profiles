@@ -64,8 +64,7 @@ Phase 4 is divided into a mandatory delivery track and an optional product-exper
 - Bounded bulk-operation coordinator with per-profile outcomes.
 - Authenticated versioned local REST API and operation-status surface.
 - Policy-bound Playwright automation leases.
-- Human typing and basic Cookie Bot behavior.
-- An accepted, deferred, or rejected Run with Sync prototype decision.
+- An explicit accept/defer/reject decision for each Phase 4B experiment; implementation deliverables exist only for experiments activated by `DEC-PHASE4B-001`.
 - Update, API, automation, and resource regression suites.
 
 ## Workstreams
@@ -186,7 +185,7 @@ Planned evidence for these scenarios uses the `AT-P4-*` identifiers in the [Requ
 - Reject local API calls with missing, invalid, expired, revoked, or insufficient-scope tokens.
 - Reconcile an API timeout without launching a duplicate browser or job.
 - End an automation lease and prove profile/process resources are cleaned according to policy.
-- Pause Cookie Bot and Run with Sync on defined unsafe/divergent states.
+- For each activated Phase 4B experiment, pause or stop on its defined unsafe/divergent states.
 
 ## Test obligations
 
@@ -195,9 +194,9 @@ Planned evidence for these scenarios uses the `AT-P4-*` identifiers in the [Requ
 - Batch scheduler property/stress tests and resource admission tests.
 - Local API authentication, authorization, CSRF/Origin/DNS-rebinding where applicable, rate, idempotency, fuzz, and denial tests.
 - Automation lease isolation, cancellation, disconnect, and lifecycle-race tests.
-- Unicode/IME/contenteditable typing fixtures.
-- Cookie Bot navigation/timeout/proxy/resource tests.
-- Run with Sync divergence, CAPTCHA/2FA stop, and partial-result tests.
+- For activated Phase 4B work only: Unicode/IME/contenteditable typing fixtures.
+- For activated Phase 4B work only: Cookie Bot navigation/timeout/proxy/resource tests.
+- For activated Phase 4B work only: Run with Sync divergence, CAPTCHA/2FA stop, and partial-result tests.
 - Regression that all new logs and diagnostic events obey redaction.
 
 ## Exit criteria

@@ -11,6 +11,8 @@ This specification defines classification, record shape, and decision flow. It d
 
 ## Surface catalogue structure
 
+The pinned beta.31 source inventory and current unaccepted tolerance candidates are tracked in [the Phase 1 surface catalogue](../research/camoufox/FINGERPRINT_SURFACE_CATALOG.md). That catalogue is evidence input, not product support truth.
+
 Each surface entry records:
 
 | Field | Meaning |
@@ -101,4 +103,3 @@ Until evidence defines a safe narrower subset, the conservative response is to p
 ## Known blind spots
 
 Potential blind spots include native/browser-internal state not exposed to page probes, TLS implementation details, timing/power noise, font rasterization, GPU process replacement, service-worker/background requests before gating, extension behavior, media permission persistence, and same-user tampering. Each is either mapped to an audit or explicitly outside the assurance claim.
-

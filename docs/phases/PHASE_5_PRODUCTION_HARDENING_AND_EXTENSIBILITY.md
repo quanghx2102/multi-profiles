@@ -89,7 +89,7 @@ Use Phase 1/4 measurements to enforce a supported envelope rather than promising
 The scheduler considers:
 
 - host memory/CPU/GPU/handle availability;
-- browser, migration, snapshot, Cookie Bot, and automation workloads;
+- browser, migration, snapshot, automation, and any activated Phase 4B workloads;
 - per-profile priority and user overrides within safe bounds;
 - queued, admitted, paused, throttled, and rejected states;
 - fairness and cancellation;

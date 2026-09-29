@@ -1,48 +1,77 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "lockFormatVersion": "1.0.0",
-  "verificationStatus": "UNSELECTED",
+  "verificationStatus": "CANDIDATE_PARTIALLY_VERIFIED",
   "repository": {
-    "url": null,
-    "commit": null,
-    "tagOrRelease": null,
-    "selectionDate": null,
-    "selectedBy": null
+    "url": "https://github.com/daijro/camoufox",
+    "commit": "eb5dc3bc5b917d1e6c71d9cacfecdddb55fbfc4a",
+    "tagOrRelease": "v152.0.4-beta.31",
+    "tagObject": "ba8a8100abda7bc18b9f42c5d01d10c1d264f3ca",
+    "tagSignatureStatus": "UNSIGNED_ANNOTATED_TAG",
+    "selectionDate": "2026-09-29",
+    "selectedBy": "Codex Phase 1 audit; review pending"
   },
   "firefoxBase": {
-    "repositoryOrSourceUrl": null,
-    "revisionOrVersion": null,
-    "sha256": null
+    "repositoryOrSourceUrl": "https://archive.mozilla.org/pub/firefox/releases/152.0.4/source/firefox-152.0.4.source.tar.xz",
+    "revisionOrVersion": "152.0.4",
+    "sha256": "fd89982202cda5353a27307d85d48902d46576d46d1c9e36d55740e63b5216bb",
+    "signatureStatus": "UPSTREAM_SHA256SUMS_ASC_PRESENT_NOT_VERIFIED"
   },
   "launcher": {
-    "language": "UNSELECTED",
-    "sourcePathOrRepository": null,
-    "commitOrVersion": null,
-    "artifactSha256": null
+    "language": "PYTHON_CANDIDATE",
+    "sourcePathOrRepository": "https://github.com/daijro/camoufox/tree/eb5dc3bc5b917d1e6c71d9cacfecdddb55fbfc4a/pythonlib",
+    "commitOrVersion": "camoufox==0.5.6 at eb5dc3bc5b917d1e6c71d9cacfecdddb55fbfc4a",
+    "artifact": "camoufox-0.5.6-py3-none-any.whl",
+    "artifactSha256": "b906836cd952376a466f0e55445f139b8a65adfb9f18ab55cb2cd0c727b11561",
+    "selectionStatus": "CANDIDATE_ONLY_AUD_012_OPEN"
   },
   "generatorDependencies": [
     {
-      "name": "BrowserForge-or-selected-equivalent",
-      "repository": null,
-      "commitOrVersion": null,
-      "artifactSha256": null,
-      "verificationStatus": "UNSELECTED"
+      "name": "BrowserForge",
+      "repository": "https://github.com/daijro/browserforge",
+      "commitOrVersion": "1.2.4 / tag object 112affbae9f7679151511ff3bb1dd61e5475727d",
+      "artifact": "browserforge-1.2.4-py3-none-any.whl",
+      "artifactSha256": "fb1c14e62ac09de221dcfc73074200269f697596c642cb200ceaab1127a17542",
+      "verificationStatus": "ARTIFACT_HASH_VERIFIED_METADATA_SOURCE_MAPPING_PENDING"
+    },
+    {
+      "name": "Playwright Python",
+      "repository": "https://github.com/microsoft/playwright-python",
+      "commitOrVersion": "1.62.0",
+      "artifact": "playwright-1.62.0-py3-none-win_amd64.whl",
+      "artifactSha256": "92c0d98ed04eb35af557b709875edba415b1f548bdb22ddb5bb3e1e6c835c2f1",
+      "verificationStatus": "ARTIFACT_HASH_VERIFIED_SOURCE_MAPPING_PENDING"
     }
   ],
   "platformArtifact": {
     "platform": "windows",
-    "architecture": "UNSELECTED",
-    "sourceUrl": null,
-    "fileName": null,
-    "sha256": null,
-    "signatureOrProvenance": null
+    "architecture": "x86_64",
+    "sourceUrl": "https://github.com/daijro/camoufox/releases/download/font-bundle-v1/camoufox-152.0.4-beta.31-win.x86_64.zip",
+    "fileName": "camoufox-152.0.4-beta.31-win.x86_64.zip",
+    "sizeBytes": 493147697,
+    "sha256": "ed63ea51d2a07f99bacdae0f43b9ff5518bfc9ac2f15d84e2251fe06c7141e81",
+    "signatureOrProvenance": "GitHub Releases asset digest matched by camoufox 0.5.6 downloader; no detached artifact signature found",
+    "releaseContainer": "font-bundle-v1",
+    "assetCreatedAt": "2026-09-24T21:57:25Z"
   },
   "licenseSnapshot": {
-    "status": "UNSELECTED",
-    "capturedAt": null,
-    "files": [],
+    "status": "INCOMPLETE_LEGAL_REVIEW_REQUIRED",
+    "capturedAt": "2026-09-29T13:02:00Z",
+    "files": [
+      {
+        "path": "LICENSE",
+        "scope": "Camoufox repository",
+        "declaredLicense": "MPL-2.0",
+        "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+      },
+      {
+        "path": "pythonlib/pyproject.toml",
+        "scope": "Camoufox Python package",
+        "declaredLicense": "MIT",
+        "sha256": "d71883c5252ba22953db9988af9d06ed284dce126b4bb7e78f1290c99fc4fc6f"
+      }
+    ],
     "legalReviewReference": null
   },
-  "notes": "No source revision, release, artifact, hash, launcher, Firefox base, dependency set, or license conclusion has been selected or verified."
+  "notes": "Phase 1 candidate only. Stable beta.31 was selected instead of prerelease beta.32. Source tag is unsigned. The Windows asset is hosted under the mutable-purpose font-bundle-v1 release rather than a same-name browser release. Source mapping for all transitive packages, third-party notices/font redistribution rights, Firefox checksum signature verification, reproducible-build equivalence, and qualified legal review remain open. Python is only the current launcher candidate; camoufox-js 0.12.0 is experimental and constrains playwright-core below 1.61, so AUD-012 remains open."
 }
-

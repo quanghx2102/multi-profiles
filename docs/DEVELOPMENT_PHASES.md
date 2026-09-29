@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines how the five phases are sequenced and governed. Detailed execution specifications live in [`phases/`](phases/README.md). Product boundaries remain in [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md), technical uncertainty in [AUDIT_REGISTER.md](AUDIT_REGISTER.md), and accepted architectural choices in [`adr/`](adr/).
+This document defines how the five phases are sequenced and governed. Detailed execution specifications live in [`phases/`](phases/README.md), while task-level progress is tracked only in [WORK_BREAKDOWN.md](WORK_BREAKDOWN.md). Product boundaries remain in [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md), technical uncertainty in [AUDIT_REGISTER.md](AUDIT_REGISTER.md), and accepted architectural choices in [`adr/`](adr/).
 
 The roadmap is a decision framework, not a calendar estimate. A phase advances because its evidence and acceptance gates are satisfied, not because a target date arrives.
 
@@ -12,6 +12,7 @@ The roadmap is a decision framework, not a calendar estimate. A phase advances b
 - Completed within Phase 1: documentation baseline and initial audit register.
 - Not yet performed: Camoufox source audit, technical experiments, dependency installation, application scaffolding, or browser builds.
 - All initial audit items remain `NOT_STARTED` with hypothesis-level evidence.
+- Phase task status is current in [WORK_BREAKDOWN.md](WORK_BREAKDOWN.md); completed documentation tasks do not satisfy runtime audit gates.
 
 ## Phase map
 

@@ -2,9 +2,9 @@
 
 ## Status
 
-`ACTIVE` for documentation; `GATED` for technical conclusions.
+`ACTIVE` for authorized source/runtime research; `GATED` for technical conclusions and Phase 2 entry.
 
-The architecture baseline, specifications, ADRs, and initial audit register exist. No Camoufox source audit or runtime experiment has been performed by this repository yet. Every planned result below remains prospective until evidence is attached to [AUDIT_REGISTER.md](../AUDIT_REGISTER.md).
+The architecture baseline, specifications, ADRs, and initial audit register exist. The beta.31 candidate has an initial source/runtime spike and evidence links in [AUDIT_REGISTER.md](../AUDIT_REGISTER.md); none of the mandatory audits is confirmed/resolved, and `AUD-015` currently blocks distribution because of the bundled-font notice.
 
 ## Objective
 
@@ -52,7 +52,7 @@ Determine whether a pinned Camoufox/launcher combination can safely support the 
 - Controlled proxy, DNS, WebRTC, crash-injection, and resource-observation facilities.
 - Disposable profiles and accounts with no production credentials.
 - Qualified licensing input before making distribution conclusions.
-- Authorization in a later turn before cloning source, installing tools, building a browser, or executing the technical experiments.
+- Continued authorization for bounded Phase 1 experiments; production scaffolding still requires the Phase 1 exit decision.
 
 ## Workstreams
 

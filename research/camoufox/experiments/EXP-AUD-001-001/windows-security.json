@@ -1,0 +1,25 @@
+{
+  "dpapiCurrentUser": {
+    "ciphertextDiffers": true,
+    "ciphertextLength": 262,
+    "plaintextPersisted": false,
+    "roundTrip": true,
+    "wrongEntropyRejected": true
+  },
+  "jobObject": {
+    "aliveBeforeJobClose": true,
+    "assignedBeforeResume": true,
+    "createdSuspended": true,
+    "exitCodeWasActiveAfterWait": false,
+    "terminatedOnJobClose": true
+  },
+  "kind": "windows-security-primitives",
+  "limits": [
+    "No different-user DPAPI test was performed",
+    "No Camoufox tree was placed in the test Job Object",
+    "Same-user malware remains outside the protection claim"
+  ],
+  "passed": true,
+  "schemaVersion": "0.1.0",
+  "timestamp": "2026-09-29T13:01:56.835211Z"
+}

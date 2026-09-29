@@ -1,23 +1,23 @@
 # Upstream Dependencies and Pinning Policy
 
-- Status: Draft / Unverified
+- Status: Draft / beta.31 candidate partially verified
 - Owner: Phase 1 provenance workstream
 - Last reviewed: 2026-09-28
 - Review trigger: Any upstream-lock selection or update proposal
 
 ## Evidence boundary
 
-Repository locators below are discovery inputs, not an accepted source, release, license, maintenance, or capability conclusion. Exact commits, tags, artifacts, hashes, transitive dependencies, and license snapshots remain `UNSELECTED` in `research/camoufox/UPSTREAM_LOCK.json` until authorized audit work records evidence.
+The beta.31 candidate is pinned in `research/camoufox/UPSTREAM_LOCK.json`. It is not an accepted distribution or Phase 2 input: transitive/source mapping, signature/reproducible-build evidence, and legal review remain incomplete, and `AUD-015` records a bundled-font distribution blocker.
 
 ## Dependency inventory
 
 | Dependency | Candidate official locator | Purpose | Pinning unit | License/status | Audit |
 |---|---|---|---|---|---|
-| Camoufox browser/build/launcher repository | <https://github.com/daijro/camoufox> | Firefox-derived candidate engine, patches/build inputs, launcher packages | Full immutable commit plus selected release/artifact hashes | `UNVERIFIED`; inspect exact files and distribution contents | `AUD-015`, `AUD-016`, `AUD-023` |
+| Camoufox browser/build/launcher repository | <https://github.com/daijro/camoufox> | Firefox-derived candidate engine, patches/build inputs, launcher packages | Full immutable commit plus selected release/artifact hashes | beta.31 candidate pinned; distribution held by `AUD-015` | `AUD-015`, `AUD-016`, `AUD-023` |
 | Camoufox documentation | <https://camoufox.com/> | Discovery of intended configuration/launcher behavior | Documentation snapshot date and source revision where available | Claims remain hypotheses until source/test evidence | Relevant behavioral audits |
-| BrowserForge | <https://github.com/daijro/browserforge> | Candidate fingerprint/header generator dependency if present in selected launcher | Immutable commit and resolved package artifact | `UNVERIFIED` | `AUD-001`, `AUD-012`, `AUD-015` |
-| Firefox base | Locator derived from selected Camoufox build inputs | Upstream browser source | Exact Firefox revision/source archive hash | `UNSELECTED`; legal/security review required | `AUD-015`, `AUD-020`, `AUD-023` |
-| Playwright | Locator/manifests derived from selected launcher | Candidate automation transport/library | Exact resolved package version/artifact hash | `UNSELECTED` | `AUD-012`, `AUD-024` |
+| BrowserForge | <https://github.com/daijro/browserforge> | Candidate fingerprint/header generator dependency if present in selected launcher | Immutable commit and resolved package artifact | `1.2.4` artifact pinned; source mapping review pending | `AUD-001`, `AUD-012`, `AUD-015` |
+| Firefox base | Locator derived from selected Camoufox build inputs | Upstream browser source | Exact Firefox revision/source archive hash | `152.0.4` source/hash pinned; checksum signature not verified | `AUD-015`, `AUD-020`, `AUD-023` |
+| Playwright | Locator/manifests derived from selected launcher | Candidate automation transport/library | Exact resolved package version/artifact hash | Python `1.62.0` Windows artifact pinned; source mapping pending | `AUD-012`, `AUD-024` |
 | Other generator/runtime dependencies | Discovered from pinned manifests | Identity generation, build, packaging, or runtime support | Lockfile-resolved commit/version/artifact | `UNSELECTED` | `AUD-001`, `AUD-015`, `AUD-016` |
 
 ## Selection procedure
@@ -34,4 +34,3 @@ Repository locators below are discovery inputs, not an accepted source, release,
 ## Update review
 
 An upstream change creates a new candidate lock. It does not mutate existing evidence. Review release/source diffs, patch/config schema, generator data, dependencies, licenses, artifacts/signatures, known security issues, launcher parity, qualification impact, and rollback compatibility. A floating `main`, `latest`, `stable`, unpinned package range, or URL without a recorded immutable digest is forbidden in an audit/build input.
-

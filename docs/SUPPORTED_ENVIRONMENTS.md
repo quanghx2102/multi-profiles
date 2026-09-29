@@ -19,8 +19,9 @@ No row below is supported merely because it is listed. `UNSELECTED` means the ex
 | `ENV-WIN-NVIDIA-01` | NVIDIA GPU | `UNSELECTED` | `x86_64` candidate | NVIDIA family/driver `UNSELECTED` | Mixed-DPI candidate | `UNSELECTED` | `UNSELECTED` | `UNVERIFIED` |
 | `ENV-WIN-LOCALE-01` | Locale/font variance | `UNSELECTED` | `x86_64` candidate | `UNSELECTED` | `UNSELECTED` | Non-default language pack/timezone/font inventory `UNSELECTED` | `UNSELECTED` | `UNVERIFIED` |
 | `ENV-WIN-SECURITY-01` | Security-tool compatibility | `UNSELECTED` | `x86_64` candidate | `UNSELECTED` | `UNSELECTED` | `UNSELECTED` | Representative AV product/version `UNSELECTED` | `UNVERIFIED` |
+| `ENV-WIN10-SMOKE-01` | Audit smoke only; not a support candidate | Windows 10 `10.0.19045` | `AMD64` | Intel HD Graphics observation; exact driver not recorded | Synthetic browser screen 1600×900 at DPR 1; physical display not qualified | `en-US`; `Asia/Bangkok`; font inventory not captured | Not recorded | `TESTED_LIMITED` |
 
-Windows 10, Windows on ARM64, virtual machines, Remote Desktop, headless sessions, and server editions are not implied. They require explicit candidate rows and evidence.
+`ENV-WIN10-SMOKE-01` records only where the initial probes ran; it does not add Windows 10 to product support. Windows on ARM64, virtual machines, Remote Desktop, headless sessions, and server editions are not implied. They require explicit candidate rows and evidence.
 
 ## Dimension matrices
 
@@ -39,4 +40,3 @@ Windows 10, Windows on ARM64, virtual machines, Remote Desktop, headless session
 ## Evidence record requirements
 
 Every test run records environment ID plus exact OS build, updates, hardware identifiers at the approved redaction level, driver versions, displays/DPI/zoom, locale/language/timezone, font inventory hash, proxy topology, media devices, security tools, power/sleep state, and deviations from the environment definition.
-

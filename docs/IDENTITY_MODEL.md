@@ -29,8 +29,11 @@ The identity manifest contains at least:
 - OS/device preset, screen, CPU/RAM class, GPU/WebGL preset, fonts, and media-device configuration;
 - identity-bearing locale/timezone inputs;
 - Canvas, Audio, WebGL-noise, and ClientRects seeds;
-- manifest integrity hash;
-- dedicated `user_data_dir` reference.
+- manifest integrity hash.
+
+The manifest does not store a concrete `user_data_dir` path. The profile aggregate/storage boundary owns a logical browser-data-directory binding, and the filesystem adapter resolves it to a validated host path. A journaled import or recovery may relocate that physical path without changing profile identity; two profiles may never resolve to the same mutable directory.
+
+`profileSecretRef` is a stable application-level opaque identifier, not a portable Windows keychain locator. The protected-store adapter resolves that identifier to host-local protected storage. Backup/Transfer preserves the secret value through the approved encrypted flow and re-establishes the local binding without exposing the value or changing the profile's identity semantics.
 
 Whether Camoufox consumes every listed seed and propagates it consistently is explicitly unverified (`AUD-001`, `AUD-002`, `AUD-003`, `AUD-006`, `AUD-007`, `AUD-022`).
 

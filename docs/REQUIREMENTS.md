@@ -64,7 +64,7 @@ This file assigns stable IDs to concise normative requirements. The linked owner
 | Range | Purpose | Owner |
 |---|---|---|
 | `AT-P1-001`–`AT-P1-007` | identity, isolation, fingerprint, proxy, protocol, upstream/resource, and launcher audit evidence | [Phase 1](phases/PHASE_1_AUDIT_AND_TECHNICAL_SPIKE.md) |
-| `AT-P2-001`–`AT-P2-008` | desktop lifecycle, recovery, isolation, preflight, contracts, proxy, renderer, and architecture tests | [Phase 2](phases/PHASE_2_LOCAL_DESKTOP_MVP.md) |
+| `AT-P2-001`–`AT-P2-008` | desktop lifecycle, recovery, isolation, preflight, contracts, proxy, security/renderer, and architecture tests | [Phase 2](phases/PHASE_2_LOCAL_DESKTOP_MVP.md) |
 | `AT-P3-001`–`AT-P3-009` | snapshot, restore, portability, extension, and proxy tests | [Phase 3](phases/PHASE_3_DATA_SAFETY_AND_PORTABILITY.md) |
 | `AT-P4-001`–`AT-P4-008` | update, migration, bulk, API, lease, and optional automation tests | [Phase 4](phases/PHASE_4_CORE_UPDATE_AUTOMATION_AND_BULK.md) |
 | `AT-P5-001`–`AT-P5-009` | distribution, environment, security, soak, diagnostics, release, registry, Chromium, and claim tests | [Phase 5](phases/PHASE_5_PRODUCTION_HARDENING_AND_EXTENSIBILITY.md) |

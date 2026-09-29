@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "cookie": false,
+    "indexedDb": true,
+    "localStorage": true
+  },
+  "finishedAt": "2026-09-29T12:58:12.777863Z",
+  "kind": "clean-close-checkpoint",
+  "passed": false,
+  "schemaVersion": "0.1.0",
+  "scopeLimit": "One disposable profile, clean close, same host and core only",
+  "startedAt": "2026-09-29T12:57:59.042191Z"
+}

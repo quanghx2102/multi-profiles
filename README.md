@@ -2,7 +2,7 @@
 
 This repository currently contains the Phase 1 architecture and audit baseline for a Windows-first, single-user desktop application that manages isolated browser profiles. Camoufox/Firefox is the first intended browser engine, but it is treated as an adapter behind an engine-neutral contract.
 
-No production application has been scaffolded. No runtime dependency has been installed or version-pinned during Phase 1; planned technology choices are recorded as architecture decisions only.
+No production application has been scaffolded. A disposable external Python environment and Camoufox browser cache were created for the authorized Phase 1 spike; candidate versions/hashes and reviewed evidence are recorded under `research/camoufox`, not added as product dependencies.
 
 ## Product intent
 
@@ -12,7 +12,7 @@ The product promises browser-level isolation and measured fingerprint consistenc
 
 ## Phase 1 status
 
-Phase 1 is documentation and evidence planning only. Camoufox behavior remains unverified until the source and experiments named in the [Audit Register](docs/AUDIT_REGISTER.md) are completed.
+Phase 1 audit work is active. Initial beta.31 source/runtime evidence exists, but no audit is confirmed or resolved; the current official Windows artifact is on distribution hold under `AUD-015` because of its bundled-font notice. See the [Audit Register](docs/AUDIT_REGISTER.md) and [Results Index](research/camoufox/RESULTS_INDEX.md).
 
 Start with:
 
@@ -22,6 +22,7 @@ Start with:
 - [Feature Disposition Matrix](docs/FEATURE_MATRIX.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Development Phases](docs/DEVELOPMENT_PHASES.md)
+- [Phase Work Breakdown and Progress](docs/WORK_BREAKDOWN.md)
 - [Detailed Phase Specifications](docs/phases/README.md)
 - [Audit Register](docs/AUDIT_REGISTER.md)
 - [Audit Evidence Templates](docs/audit/README.md)
@@ -31,6 +32,9 @@ Start with:
 - [Decisions Requiring Approval](docs/DECISIONS_REQUIRED.md)
 - [Test Strategy](docs/TEST_STRATEGY.md)
 - [Decision and Requirement Traceability](docs/TRACEABILITY.md)
+- [Documentation Review and Rationalization](docs/DOCUMENTATION_REVIEW.md)
+- [Windows Security Boundary Proposal](docs/WINDOWS_SECURITY_BOUNDARIES.md)
+- [Physical Schema, API, and Binding Readiness](docs/PHYSICAL_SCHEMA_API_BINDINGS.md)
 - [Architecture Decision Records](docs/adr/)
 
 ## Documentation authority

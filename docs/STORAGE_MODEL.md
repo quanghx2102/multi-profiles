@@ -8,7 +8,7 @@ This document defines logical ownership and consistency requirements. It does no
 
 | Class | Examples | Authority |
 |---|---|---|
-| Profile metadata | profile record, lifecycle state, user metadata, activation generation | Profile repository port |
+| Profile metadata | profile record, lifecycle state, user metadata, activation generation, logical browser-data-directory binding | Profile repository port |
 | Identity | immutable manifest, schema/derivation metadata, seed references, integrity hash | Identity repository plus protected secret store |
 | Runtime configuration | proxy assignment reference, approved extensions, startup and non-identity launch choices | Runtime-configuration repository |
 | Observations | fingerprint baselines and compatibility records | Baseline/compatibility repositories |
@@ -30,6 +30,7 @@ The logical model includes profiles, immutable identity manifests, runtime confi
 - Identity manifest writes use atomic replace plus integrity verification.
 - Mutable core/proxy/extension choices never rewrite the immutable identity manifest.
 - Browser data is never shared by path between profiles.
+- A logical browser-data-directory binding resolves through the filesystem adapter; relocation is journaled and revalidated, while an absolute host path is not immutable identity material.
 - Core directories are immutable after verification; a new build/hash gets a distinct installation identity.
 - Snapshots are immutable and content/integrity addressed after completion.
 - Subject to approval of [ADR-0015](adr/0015-profile-owned-active-core-pointer.md), the profile aggregate owns the only mutable `activeCoreId`; the identity manifest contains no competing activation pointer.
@@ -52,3 +53,5 @@ SQLite durability settings, filesystem atomicity on supported Windows filesystem
 ## Backup boundary
 
 Backups include authoritative state required for the selected mode and omit reproducible caches. Separately managed proxy credentials, API tokens, and application credentials are excluded by default. Saved-password and authenticated-session exclusion from opaque browser state is a policy target, not a proven capability; `AUD-026` must establish the file/key inventory and safe mode boundaries before implementation. See [IMPORT_EXPORT.md](IMPORT_EXPORT.md).
+
+The initial beta.31 clean-close observations and still-unproven checkpoint/portability levels are recorded in [the Phase 1 browser-state matrix](../research/camoufox/BROWSER_STATE_CHECKPOINT_MATRIX.md). They do not change the logical authority rules in this document.

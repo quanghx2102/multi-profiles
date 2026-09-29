@@ -4,6 +4,8 @@ These documents translate the agreed product roadmap into phase-level execution 
 
 Phase documents own sequencing, deliverables, entry/exit criteria, and handoff. They link rather than override business invariants in [REQUIREMENTS.md](../REQUIREMENTS.md), runtime evidence state in [AUDIT_REGISTER.md](../AUDIT_REGISTER.md), architecture decisions in [adr](../adr/), and wire/data shapes in [contracts](../../contracts/README.md).
 
+Task-level status, blockers, module ownership, and completion evidence are tracked in [WORK_BREAKDOWN.md](../WORK_BREAKDOWN.md). A task marked complete does not pass an audit or phase gate by implication.
+
 - [Phase 1 — Audit and Technical Spike](PHASE_1_AUDIT_AND_TECHNICAL_SPIKE.md)
 - [Phase 2 — Local Desktop MVP](PHASE_2_LOCAL_DESKTOP_MVP.md)
 - [Phase 3 — Data Safety and Portability](PHASE_3_DATA_SAFETY_AND_PORTABILITY.md)

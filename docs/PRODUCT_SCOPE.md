@@ -71,9 +71,9 @@ The agreed product is more than a Camoufox launcher. The following capability ma
 | Recovery | Safe snapshots and snapshot recovery, backup recovery, retention, and crash reconciliation as distinct operations | `AUD-013`; snapshot only after checkpoint |
 | Extensions | Per-profile Firefox-compatible extensions | `AUD-011`; no promise of Chrome Web Store or Chrome-only API compatibility |
 | Automation | Local authenticated API and Playwright-oriented automation | Phase 4 and `AUD-018`; no promised Puppeteer/CDP parity |
-| Cookie Bot | Basic scheduled browsing workflow with per-profile result and resource controls | Phase 4; no claim that generated behavior is human or unlinkable |
-| Human typing | Unicode/IME-aware typing behavior through approved automation/UI mechanisms | Phase 4; implementation behavior must be tested |
-| Run with Sync | Optional semantic leader/follower prototype using navigation intent and locators, with divergence/2FA/CAPTCHA stops | Phase 4 prototype; raw coordinate mirroring is not the design |
+| Cookie Bot | Conditional scheduled browsing experiment with per-profile result and resource controls | Optional Phase 4B under `DEC-PHASE4B-001`; no claim that generated behavior is human or unlinkable |
+| Human typing | Conditional Unicode/IME-aware typing experiment through approved automation/UI mechanisms | Optional Phase 4B under `DEC-PHASE4B-001`; behavior must be tested if activated |
+| Run with Sync | Optional semantic leader/follower prototype using navigation intent and locators, with divergence/2FA/CAPTCHA stops | Optional Phase 4B under `DEC-PHASE4B-001`; raw coordinate mirroring is not the design |
 | Core lifecycle | Side-by-side installation, qualification, canary, semantic migration, rollback | `AUD-009`, `AUD-016`, `AUD-020` |
 | Portability | Encrypted Backup, Transfer, and Duplicate-as-new | `AUD-010`, `AUD-021`, `AUD-022`, `AUD-026`; same-catalogue collision follows ADR-0013 |
 

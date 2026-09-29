@@ -2,7 +2,7 @@
 
 - Status: Accepted
 - Owner: Repository maintainers
-- Last reviewed: 2026-09-28
+- Last reviewed: 2026-09-29
 - Next review: Before any Phase 2 scaffold or after a governing decision changes
 
 ## Purpose
@@ -21,8 +21,11 @@ This document defines where authoritative information lives, how conflicts are r
 | Lifecycle and operation behavior | [PROFILE_LIFECYCLE.md](PROFILE_LIFECYCLE.md), [OPERATIONS_MODEL.md](OPERATIONS_MODEL.md) | [SIDECAR_PROCESS_MODEL.md](SIDECAR_PROCESS_MODEL.md) |
 | Engine behavior contract | [ENGINE_CONTRACT.md](ENGINE_CONTRACT.md) and [contract schemas](../contracts/README.md) | Adapter-specific qualification evidence |
 | Security policy and threats | [SECURITY_MODEL.md](SECURITY_MODEL.md), [THREAT_MODEL.md](THREAT_MODEL.md) | Audit evidence and test reports |
+| Proposed Windows process/secret/IPC mechanisms | [WINDOWS_SECURITY_BOUNDARIES.md](WINDOWS_SECURITY_BOUNDARIES.md) | `AUD-024`, `AUD-031`, `AUD-033`, `AUD-034` evidence |
+| Physical schema/API/binding readiness | [PHYSICAL_SCHEMA_API_BINDINGS.md](PHYSICAL_SCHEMA_API_BINDINGS.md) | Data/API decisions and accepted contract schemas |
 | Technical uncertainty and evidence status | [AUDIT_REGISTER.md](AUDIT_REGISTER.md) | [research/camoufox](../research/camoufox/README.md), audit reports |
 | Delivery order, gates, and handoff | [DEVELOPMENT_PHASES.md](DEVELOPMENT_PHASES.md), [phase specifications](phases/README.md) | Requirement and audit links |
+| Executable task breakdown and task status | [WORK_BREAKDOWN.md](WORK_BREAKDOWN.md) | Phase specifications and acceptance evidence |
 | Upstream selection and dependency state | [UPSTREAM_DEPENDENCIES.md](UPSTREAM_DEPENDENCIES.md), `research/camoufox/UPSTREAM_LOCK.json` | Evidence records |
 | Terminology | [GLOSSARY.md](GLOSSARY.md) | Owning specifications |
 
@@ -63,6 +66,7 @@ Every new governing document records status, owner, last-reviewed date, and a re
 - Requirement changes preserve IDs. A removed requirement becomes `Superseded` or `Rejected` with a replacement/reason; its ID is not reused.
 - Audit IDs, evidence IDs, environment IDs, operation IDs, and decision IDs are never renumbered after publication.
 - Phase documents own entry/exit gates, sequencing, deliverables, and handoff. They link to—rather than redefine—business invariants.
+- The work-breakdown register owns `TASK-*` status. A task status never changes an audit status or phase gate by implication.
 - Claims about Camoufox remain hypotheses until the Audit Register links sufficient source or test evidence.
 
 ## Generated files
@@ -85,4 +89,3 @@ When generation is introduced:
 5. Run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/docs-check.ps1`.
 6. Record unresolved decisions in `DECISIONS_REQUIRED.md` and runtime uncertainty in the Audit Register.
 7. Review documentation at each phase entry/exit, before a contract version changes, and whenever an upstream lock changes.
-

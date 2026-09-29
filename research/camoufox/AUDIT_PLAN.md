@@ -1,7 +1,7 @@
 # Camoufox Audit Plan
 
-- Status: Proposed; execution not authorized by this document
-- Inputs: `UPSTREAM_LOCK.json` must be fully selected and reviewed before execution
+- Status: Active; initial fail-fast source/runtime spike recorded 2026-09-29
+- Inputs: `UPSTREAM_LOCK.json` contains a partially verified beta.31 candidate. Only bounded research may continue while the distribution/license hold and remaining provenance gaps are open.
 
 ## Fail-fast order
 
@@ -72,4 +72,3 @@ Stop or hold when a critical fail-fast result makes the selected distribution/en
 4. Perform source review and runtime experiments as separate evidence sets.
 5. Hash artifacts, record confounders and failed/inconclusive runs.
 6. Obtain reviewer sign-off and recommend—but do not silently apply—a status/decision.
-

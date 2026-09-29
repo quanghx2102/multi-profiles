@@ -104,6 +104,37 @@ foreach ($reference in $requirementRefs) {
     if ($requirementIds -notcontains $reference) { Add-CheckError "Reference to undefined requirement ID: $reference" }
 }
 
+# Pending decision definitions and references.
+$decisionPath = Join-Path $RepoRoot 'docs\DECISIONS_REQUIRED.md'
+$decisionText = Get-Content -LiteralPath $decisionPath -Raw
+$decisionIds = @([regex]::Matches($decisionText, '(?m)^\| `(DEC-[A-Z0-9]+-[0-9]{3})` \|') | ForEach-Object { $_.Groups[1].Value })
+foreach ($duplicate in @($decisionIds | Group-Object | Where-Object Count -gt 1)) { Add-CheckError "Duplicate decision definition: $($duplicate.Name)" }
+$decisionRefs = @([regex]::Matches($allMarkdownText, '\bDEC-[A-Z0-9]+-[0-9]{3}\b') | ForEach-Object Value | Sort-Object -Unique)
+foreach ($reference in $decisionRefs) {
+    if ($decisionIds -notcontains $reference) { Add-CheckError "Reference to undefined decision ID: $reference" }
+}
+
+# Work-breakdown task IDs and task states. This register is the only task-status authority.
+$taskPath = Join-Path $RepoRoot 'docs\WORK_BREAKDOWN.md'
+if (-not (Test-Path -LiteralPath $taskPath -PathType Leaf)) {
+    Add-CheckError 'Missing task-status authority: docs/WORK_BREAKDOWN.md'
+} else {
+    $taskText = Get-Content -LiteralPath $taskPath -Raw
+    $taskRows = [regex]::Matches($taskText, '(?m)^\| `(?<id>TASK-(?:P[1-5]|P4A|P4B)-[0-9]{3})` \| `(?<status>[A-Z_]+)` \|')
+    $taskIds = @($taskRows | ForEach-Object { $_.Groups['id'].Value })
+    $allowedTaskStatuses = @('PENDING', 'IN_PROGRESS', 'BLOCKED', 'COMPLETE', 'DEFERRED', 'CANCELLED')
+    if ($taskIds.Count -eq 0) { Add-CheckError 'No task definitions found in docs/WORK_BREAKDOWN.md.' }
+    foreach ($duplicate in @($taskIds | Group-Object | Where-Object Count -gt 1)) { Add-CheckError "Duplicate task definition: $($duplicate.Name)" }
+    foreach ($row in $taskRows) {
+        $status = $row.Groups['status'].Value
+        if ($allowedTaskStatuses -notcontains $status) { Add-CheckError "$($row.Groups['id'].Value) has invalid task status: $status" }
+    }
+    $taskRefs = @([regex]::Matches($allMarkdownText, '\bTASK-(?:P[1-5]|P4A|P4B)-[0-9]{3}\b') | ForEach-Object Value | Sort-Object -Unique)
+    foreach ($reference in $taskRefs) {
+        if ($taskIds -notcontains $reference) { Add-CheckError "Reference to undefined task ID: $reference" }
+    }
+}
+
 # ADR numbering, references, and status values.
 $adrDir = Join-Path $RepoRoot 'docs\adr'
 $adrFiles = @(Get-ChildItem -LiteralPath $adrDir -File -Filter '*.md')
@@ -188,4 +219,4 @@ if ($Errors.Count -gt 0) {
     exit 1
 }
 
-Write-Host "Documentation checks passed: $($markdownFiles.Count) Markdown files, $($jsonFiles.Count) JSON files, $($auditIds.Count) audits, $($requirementIds.Count) requirements, and $($adrFiles.Count) ADRs." -ForegroundColor Green
+Write-Host "Documentation checks passed: $($markdownFiles.Count) Markdown files, $($jsonFiles.Count) JSON files, $($auditIds.Count) audits, $($requirementIds.Count) requirements, $($decisionIds.Count) decisions, $($taskIds.Count) tasks, and $($adrFiles.Count) ADRs." -ForegroundColor Green

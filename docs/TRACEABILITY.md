@@ -7,7 +7,7 @@ This index supplies the required path:
 
 `requirement → owning specification → ADR → audit → contract/schema → test/evidence → delivery phase`
 
-It does not duplicate requirement text or imply that planned evidence exists.
+It does not duplicate requirement text or imply that planned evidence exists. Executable units, module ownership, blockers, and current task status are indexed separately in [WORK_BREAKDOWN.md](WORK_BREAKDOWN.md).
 
 | Requirement(s) | Owning specification | ADR | Audit gate | Contract/schema | Planned test/evidence | Phase |
 |---|---|---|---|---|---|---|

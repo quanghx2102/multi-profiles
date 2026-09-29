@@ -2,6 +2,7 @@
 
 - Status: Proposed; selection requires `AUD-024` evidence
 - Date: 2026-09-28
+- Last reviewed: 2026-09-29
 - Decision owner: Pending user approval (`DEC-SIDECAR-001`)
 
 ## Context
@@ -12,13 +13,13 @@ Accepted ADRs require a language-neutral sidecar boundary, one isolated browser 
 
 | Option | Isolation / blast radius | Resource cost | Authentication/versioning | Adoption/reconciliation |
 |---|---|---|---|---|
-| One sidecar process per running profile | Strong process/session separation; one worker crash affects one profile | Highest per-profile process/runtime overhead | Per-worker authenticated session and protocol version | Direct worker/browser ownership but many endpoints |
+| One dedicated sidecar worker per running profile | Strong process/session separation; one worker crash affects one profile | Highest per-profile process/runtime overhead | Rust supervisor provisions one authenticated worker session/profile | Direct worker/browser ownership but many endpoints |
 | One shared sidecar for all profiles | Shared memory/runtime and broad crash blast radius | Lowest startup/memory overhead | One endpoint needs strict per-profile authorization and multiplexing | Shared failure complicates partial adoption and event ordering |
-| Common Rust supervisor with isolated sidecar worker per profile | Central policy with per-profile failure containment | Similar worker cost plus common supervisor already planned | Supervisor provisions one scoped worker session/profile; version compatibility checked per worker | Clear per-profile tree while common reconciliation policy remains in Rust |
+| Shared sidecar coordinator with isolated worker per profile | Per-profile worker isolation, but coordinator failure affects all workers | Worker cost plus coordinator overhead; may share some runtime services | Rust supervisor authenticates the coordinator; coordinator must provision scoped worker capabilities | Two-level adoption, event ordering, and authority must remain subordinate to Rust supervision |
 
 ## Recommendation
 
-Use the third topology as the target interpretation: the Rust supervisor is common, and each running profile receives an isolated sidecar worker process/session that launches one browser tree. This is a recommendation, not a final decision.
+Prefer the first topology: the already-required Rust supervisor creates one dedicated sidecar worker/session for each running profile, and that worker launches one browser tree. It has the smallest authority model and the narrowest sidecar crash boundary. This is a recommendation, not a final decision; `AUD-024` may reject it if measured overhead exceeds the supported concurrency envelope.
 
 ## Acceptance criteria
 
@@ -26,5 +27,4 @@ Use the third topology as the target interpretation: the Rust supervisor is comm
 
 ## Consequences
 
-The recommendation favors isolation and explainable recovery over minimum process count. If measurements reject it, a superseding proposal must show how a shared sidecar enforces per-profile authority and bounds crash impact without weakening accepted invariants.
-
+The recommendation favors isolation and explainable recovery over minimum process count. If measurements reject it, the selected shared topology must show how it enforces per-profile authority, prevents a coordinator from becoming a competing durable owner, and bounds crash impact without weakening accepted invariants.

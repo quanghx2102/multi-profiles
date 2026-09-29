@@ -22,6 +22,7 @@ Every durable fact has one authoritative owner. Caches, indexes, UI models, gene
 | Proxy assignment | Profile runtime configuration | Runtime configuration repository | Resolved launcher config | Mutable; not identity material, though it affects coherence checks |
 | Proxy credentials | Security/proxy manager | OS protected store | Opaque credential handle | Plaintext never enters ordinary metadata/UI |
 | Profile secret | Identity manager/security | OS protected store | Opaque secret handle; derived seeds in controlled memory | Never regenerated for an existing profile |
+| Browser data-directory binding | Profile aggregate/profile storage | Profile metadata repository | Validated concrete path resolved by filesystem adapter | Logical binding is unique per profile; physical relocation is a journaled recovery/import operation, not an identity change |
 | Browser state | Browser engine | Dedicated user data directory | Reproducible caches | Exact ownership and safe-copy rules require `AUD-005`/`AUD-026` |
 | Operation state | Operations service | Append/durable operation journal + committed metadata | Progress UI | Requested intent is not committed outcome |
 | Snapshot | Snapshot manager | Immutable verified snapshot + metadata | Snapshot catalogue projection | Only from a verified checkpoint |

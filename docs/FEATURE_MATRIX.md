@@ -48,8 +48,8 @@ This matrix records whether product ideas discussed during planning are committe
 | Browser-core pinning, qualification, staged update, rollback | Planned | Phase 4 | Evidence-backed core-pair rules |
 | Bulk lifecycle and safe metadata/config operations | Planned | Phase 4 | Per-profile results; not a cross-process atomic transaction |
 | Local authenticated REST API | Planned | Phase 4 | Loopback by default; application use cases only |
-| Human typing and Cookie Bot | Planned | Phase 4 | Functional automation, not an anti-detection guarantee |
-| Run with Sync | Conditional | Phase 4 optional prototype | May be rejected or deferred after prototype |
+| Human typing and Cookie Bot | Conditional | Phase 4B; `DEC-PHASE4B-001` | Optional functional experiments, not an anti-detection guarantee; do not block Phase 4A or Phase 5 |
+| Run with Sync | Conditional | Phase 4B optional prototype; `DEC-PHASE4B-001` | May be rejected or remain deferred without blocking the mandatory roadmap |
 | Node SDK | Deferred | After stable local API | REST API is the integration contract; no SDK commitment |
 | Python SDK | Deferred | After stable local API | REST API is the integration contract; no SDK commitment |
 | Selenium support | Deferred | Future engine/automation capability review | Playwright sidecar is the planned initial automation path |
